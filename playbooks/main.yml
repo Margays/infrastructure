@@ -1,0 +1,12 @@
+---
+- name: Setup nodes
+  hosts: all
+  become: true
+  roles:
+  - shutdown  # only when 'shutdown' tag provided
+  - upgrade  # only when 'system_upgrade' tag provided
+  - users
+  - packages
+  - tools
+  # - drivers/hardkernel/realtek/r8125
+  # - wake_on_lan

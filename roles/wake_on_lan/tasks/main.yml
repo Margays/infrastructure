@@ -1,0 +1,34 @@
+- name: Install packages required for WOL
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - ethtool
+      - libelf-dev
+    update_cache: true
+    state: present
+  tags:
+    - wol
+    - wake_on_lan
+
+- name: Copy wol service file
+  ansible.builtin.copy:
+    src: wol@.service
+    dest: /etc/systemd/system/wol@.service
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - wol
+    - wake_on_lan
+
+- name: Enable WOL for NICs
+  ansible.builtin.systemd:
+    name: "wol@{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - enp1s0
+    - enp2s0
+  tags:
+    - wol
+    - wake_on_lan

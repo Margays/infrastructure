@@ -1,0 +1,69 @@
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - dkms
+    update_cache: true
+    state: present
+  tags:
+    - driver
+    - nic
+
+- name: Check driver version
+  ansible.builtin.shell:
+    cmd: lsmod | grep -E '^r8125' | wc -l
+  register: driver_exists
+
+- name: Creates temporary directory
+  file:
+    path: "{{ realtek_nic_driver_tmp_dir }}"
+    state: directory
+  when: driver_exists.stdout | int < 1
+
+# - name: Extract driver archive into temporary directory
+#   ansible.builtin.unarchive:
+#     src: r8125-9.011.00.tar.bz2
+#     dest: "{{ realtek_nic_driver_tmp_dir }}"
+#   when: driver_exists.stdout | int < 1
+
+- name: Build and install driver
+  ansible.builtin.shell:
+    cmd: "{{ realtek_nic_driver_tmp_dir }}/r8125-9.011.00/autorun.sh"
+
+- name: Remove temporary directory
+  file:
+    path: "{{ realtek_nic_driver_tmp_dir }}"
+    state: absent
+
+
+
+# - name: Copy r8169 driver
+#   ansible.builtin.copy:
+#     src: etc/modprobe.d/blacklist-realtek-r8169.conf
+#     dest: /etc/modprobe.d/blacklist-realtek-r8169.conf
+#     owner: root
+#     group: root
+#     mode: 0755
+#   tags:
+#     - driver
+#     - nic
+
+# - name: Upgrade Realtek driver
+#   ansible.builtin.apt:
+#     name:
+#       - realtek-r8125-dkms
+#     update_cache: true
+#     state: present
+#   tags:
+#     - driver
+#     - nic
+
+# - name: Blacklist r8169
+#   ansible.builtin.copy:
+#     src: etc/modprobe.d/blacklist-realtek-r8169.conf
+#     dest: /etc/modprobe.d/blacklist-realtek-r8169.conf
+#     owner: root
+#     group: root
+#     mode: 0755
+#   tags:
+#     - driver
+#     - nic

@@ -1,0 +1,36 @@
+- name: Create groups
+  ansible.builtin.group:
+    name: '{{ item }}'
+    state: present
+    system: true
+  loop: "{{ lookup('list', host_groups) }}"
+  tags:
+    - users
+
+- name: Create users
+  ansible.builtin.user:
+    name: '{{ item.key }}'
+    groups: '{{ item.value.groups }}'
+    create_home: true
+    append: true
+  loop: "{{ lookup('dict', host_users, wantlist=True) }}"
+  tags:
+    - users
+
+- name: Add ssh public key
+  ansible.posix.authorized_key:
+    user: '{{ item.key }}'
+    state: present
+    key: '{{ item.value.ssh_public_key }}'
+    exclusive: true
+  loop: "{{ lookup('dict', host_users, wantlist=True) }}"
+  tags:
+    - users
+
+- name: Setup sudoers
+  community.general.sudoers:
+    name: no-password
+    state: present
+    user: '{{ item.key }}'
+    commands: ALL
+  loop: "{{ lookup('dict', host_users, wantlist=True) }}"
