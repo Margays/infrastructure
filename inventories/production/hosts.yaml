@@ -1,0 +1,36 @@
+all:
+  hosts:
+    odroid01:
+      ansible_host: 192.168.1.101
+      ip: 192.168.1.101
+      access_ip: 192.168.1.101
+    odroid02:
+      ansible_host: 192.168.1.102
+      ip: 192.168.1.102
+      access_ip: 192.168.1.102
+    odroid03:
+      ansible_host: 192.168.1.103
+      ip: 192.168.1.103
+      access_ip: 192.168.1.103
+  children:
+    kube_control_plane:
+      hosts:
+        odroid01:
+        odroid02:
+        odroid03:
+    kube_node:
+      hosts:
+        odroid01:
+        odroid02:
+        odroid03:
+    etcd:
+      hosts:
+        odroid01:
+        odroid02:
+        odroid03:
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_node:
+    calico_rr:
+      hosts: {}

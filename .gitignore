@@ -1,2 +1,8 @@
-.vscode
+# Python
+.venv
+
+# Ansible
 collections
+
+# VSCode
+.vscode

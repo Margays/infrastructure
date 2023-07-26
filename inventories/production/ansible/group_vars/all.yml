@@ -1,0 +1,7 @@
+host_groups:
+  - maintainers
+
+host_users:
+  margay:
+    groups: 'maintainers,sudo'
+    ssh_public_key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID7Cf+Llq018c2+ZjWJ2eGLI5NxE5exugOBOg6grknkL lukas@LAPTOP-UCLPD5RJ'
