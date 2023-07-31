@@ -1,11 +1,11 @@
-mkfile_dir := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-user := margay
-environment := production
+ANSIBLE_USER ?= margay
+ENVIRONMENT ?= production
 
-ANSIBLE_INVENTORY_DIR := $(mkfile_dir)/inventories/$(environment)/ansible
-KUBESPRAY_INVENTORY_DIR := $(mkfile_dir)/inventories/$(environment)/kubespray
-ANSIBLE_DIR := $(mkfile_dir)/ansible
-KUBESPRAY_DIR := $(mkfile_dir)/kubespray
+MKFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+ANSIBLE_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/ansible
+KUBESPRAY_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/kubespray
+ANSIBLE_DIR := $(MKFILE_DIR)/ansible
+KUBESPRAY_DIR := $(MKFILE_DIR)/kubespray
 
 .ONESHELL:
 
@@ -17,20 +17,40 @@ build-nodes:
 	pip install -r requirements.txt
 	mkdir -p collections
 	ansible-galaxy collection install -r requirements.yml -p collections
-	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/main.yml -u $(user) -K --tags "system_upgrade"
+	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/main.yml -u $(ANSIBLE_USER) -K --tags "system_upgrade"
 
+.PHONY: k8s-requirements
 k8s_requirements:
 	test -d $(KUBESPRAY_INVENTORY_DIR)/.venv || python3 -m virtualenv $(KUBESPRAY_INVENTORY_DIR)/.venv
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	pip install -r $(KUBESPRAY_DIR)/requirements.txt
 
 .PHONY: build-kubernetes
-build-kubernetes: k8s_requirements
+build-kubernetes: k8s-requirements
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	cd $(KUBESPRAY_DIR)
-	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(user) --become --become-user=root -K cluster.yml
+	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K cluster.yml
 
-delete-kubernetes: k8s_requirements
+.PHONY: delete-kubernetes
+delete-kubernetes: k8s-requirements
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	cd $(KUBESPRAY_DIR)
-	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(user) --become --become-user=root -K reset.yml
+	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K reset.yml
+
+.PHONY: flux
+flux:
+ifndef GITHUB_USERNAME
+	$(error GITHUB_USERNAME is undefined)
+endif
+ifndef GITHUB_TOKEN
+	$(error GITHUB_TOKEN is undefined)
+endif
+	flux bootstrap git \
+      --url=https://github.com/OpenSourceMargays/infrastructure.git \
+      --username=$(GITHUB_USERNAME) \
+      --password=$(GITHUB_TOKEN) \
+      --token-auth=true \
+      --path=flux/clusters/$(ENVIRONMENT)
+
+.PHONY: bootstrap
+bootstrap: build-nodes build-kubernetes flux

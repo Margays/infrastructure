@@ -1,0 +1,20 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: cilium
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: cilium
+      targetNamespace: kube-system
+      storageNamespace: kube-system
+      sourceRef:
+        kind: HelmRepository
+        name: cilium-repository
+      version: 1.14.0
+      values:
+        kubeProxyReplacement: true
+        k8sServiceHost: '192.168.1.101'
+        k8sServicePort: 6443
+  interval: 1d
