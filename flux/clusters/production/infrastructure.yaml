@@ -4,7 +4,7 @@ metadata:
   name: infrastructure
   namespace: flux-system
 spec:
-  interval: 30m
+  interval: 1m
   path: ./infrastructure/production
   prune: true
   sourceRef:
