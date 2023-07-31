@@ -5,11 +5,10 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
-  path: ./apps/production
+  path: ./flux/apps/production
   prune: true
   dependsOn:
     - name: infrastructure
   sourceRef:
     kind: GitRepository
     name: flux-system
-  validation: client
