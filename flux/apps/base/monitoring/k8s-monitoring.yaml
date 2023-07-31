@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: k8s-monitoring
+  namespace: monitoring
+spec:
+  chart:
+    spec:
+      chart: k8s-monitoring
+      sourceRef:
+        kind: HelmRepository
+        name: grafana-repository
+      version: 0.0.12
+  values:
+    cluster:
+      name: my-cluster
+
+    externalServices:
+      prometheus:
+        host: https://prometheus.example.com
+        username: "12345"
+        password: "It's a secret to everyone"
+      loki:
+        host: https://loki.example.com
+        username: "67890"
+        password: "It's a secret to everyone"
+
+  interval: 1d
