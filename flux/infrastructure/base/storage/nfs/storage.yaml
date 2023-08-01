@@ -14,7 +14,7 @@ spec:
       version: 4.0.18
   values:
     nfs:
-      server: "storage.local"
+      server: "192.168.1.2"
       path: "/volume2/nfs"
     storageClass:
       defaultClass: true
