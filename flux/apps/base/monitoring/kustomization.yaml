@@ -5,4 +5,4 @@ resources:
   - loki.yaml
   - namespace.yaml
   - repositories.yaml
-  - tempo.yaml
+  # - tempo.yaml
