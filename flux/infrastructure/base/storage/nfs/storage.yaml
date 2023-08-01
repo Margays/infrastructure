@@ -11,7 +11,7 @@ spec:
         kind: HelmRepository
         name: nfs-provisioner-repository
         namespace: flux-system
-      version: 1.14.0
+      version: 4.0.18
   values:
     nfs:
       server: "storage.local"
