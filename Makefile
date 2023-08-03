@@ -17,7 +17,7 @@ build-nodes:
 	pip install -r requirements.txt
 	mkdir -p collections
 	ansible-galaxy collection install -r requirements.yml -p collections
-	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/main.yml -u $(ANSIBLE_USER) -K --tags "system_upgrade"
+	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/main.yml -u $(ANSIBLE_USER) -K
 
 .PHONY: k8s-requirements
 k8s_requirements:
@@ -51,6 +51,7 @@ endif
       --password=$(GITHUB_TOKEN) \
       --token-auth=true \
       --path=flux/clusters/$(ENVIRONMENT)
+	kubectl apply -k flux/clusters/$(ENVIRONMENT)
 
 .PHONY: bootstrap
 bootstrap: build-nodes build-kubernetes flux
