@@ -28,6 +28,9 @@ spec:
         enabled: true
     hubble:
       enabled: true
+      relay:
+        enabled: true
+        rollOutPods: true
       metrics:
         enabled:
           - dns:query;ignoreAAAA
