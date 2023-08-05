@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: etcd
+spec:
+  nodeSelector:
+    # apply to master nodes
+    matchLabels:
+      node-role.kubernetes.io/control-plane: ''
+  ingress:
+  # etcd peer -> etcd peer
+  - fromEntities:
+    - remote-node
+    toPorts:
+    - ports:
+      - port: '2380'
+        protocol: TCP
+  egress:
+  # etcd peer -> etcd peer
+  - toEntities:
+    - remote-node
+    toPorts:
+    - ports:
+      - port: '2380'
+        protocol: TCP
