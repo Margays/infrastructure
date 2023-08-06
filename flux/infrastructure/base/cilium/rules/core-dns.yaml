@@ -1,0 +1,62 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: core-dns
+  namespace: kube-system
+specs:
+  - nodeSelector:
+      # apply to master nodes
+      matchLabels:
+        node-role.kubernetes.io/control-plane: ''
+    ingress:
+    # core dns -> api server
+    - fromEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+      - ports:
+        - port: '6443'
+          protocol: TCP
+  - nodeSelector:
+      # apply to all nodes
+      matchLabels: {}
+    egress:
+    # kubelet -> core dns probes
+    - toEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+      - ports:
+        - port: '8080'
+          protocol: TCP
+        - port: '8181'
+          protocol: TCP
+  - endpointSelector:
+      # apply to core dns pods
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: coredns
+    ingress:
+    # kubelet -> core dns probes
+    - fromEntities:
+      - host
+      toPorts:
+      - ports:
+        - port: '8080'
+          protocol: TCP
+        - port: '8181'
+          protocol: TCP
+    egress:
+    # core dns -> api server
+    - toEntities:
+      - kube-apiserver
+      toPorts:
+      - ports:
+        - port: '6443'
+          protocol: TCP
+    # core dns -> upstream DNS
+    - toCIDR:
+      - 192.168.1.1/32
+      toPorts:
+      - ports:
+        - port: '53'
+          protocol: UDP

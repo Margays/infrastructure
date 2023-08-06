@@ -16,7 +16,7 @@ spec:
     kubeProxyReplacement: true
     k8sServiceHost: '192.168.1.101'
     k8sServicePort: 6443
-    policyEnforcementMode: always    # enforce network policies
+    policyEnforcementMode: 'always'    # enforce network policies
     policyAuditMode: true            # do not block traffic
     hostFirewall:
       enabled: true                  # enable host policies
@@ -45,6 +45,8 @@ spec:
         enabled: true
     hubble:
       enabled: true
+      ui:
+        enabled: true
       relay:
         enabled: true
         rollOutPods: true

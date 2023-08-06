@@ -1,0 +1,39 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: cilium-health
+specs:
+  - endpointSelector:
+      # apply to health endpoints
+      matchLabels:
+        reserved:health: ''
+    ingress:
+    # cilium agent -> cilium agent
+    - fromEntities:
+      - host
+      - remote-node
+      toPorts:
+      - ports:
+        - port: '4240'
+          protocol: TCP
+  - nodeSelector:
+      # apply to all nodes
+      matchLabels: {}
+    ingress:
+    # cilium agent -> cilium agent
+    - fromEntities:
+      - health
+      - remote-node
+      toPorts:
+      - ports:
+        - port: '4240'
+          protocol: TCP
+    egress:
+    # cilium agent -> cilium agent
+    - toEntities:
+      - health
+      - remote-node
+      toPorts:
+      - ports:
+        - port: '4240'
+          protocol: TCP
