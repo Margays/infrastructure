@@ -71,10 +71,10 @@ spec:
         send_batch_size: 100
 
     exporters:
-      jaeger:
+      otlp:
         endpoint: tempo-prod-04-prod-us-east-0.grafana.net:443
         headers:
-          authorization: Basic NjM4NTIwOmdsY19leUp2SWpvaU9EazJPVE15SWl3aWJpSTZJbWR5WVdaaGJtRXRZV2RsYm5RdFlXZGxiblF0ZEc5clpXNGlMQ0pySWpvaU9USnlOMlZSUVRoQlRqaEZSRFF6U0dNeWVEQXlaSHB0SWl3aWJTSTZleUp5SWpvaWRYTWlmWDAK
+          authorization: Basic NjM4NTIwOmdsY19leUp2SWpvaU9EazJPVE15SWl3aWJpSTZJbWR5WVdaaGJtRXRZV2RsYm5RdFlXZGxiblF0ZEc5clpXNGlMQ0pySWpvaU9USnlOMlZSUVRoQlRqaEZSRFF6U0dNeWVEQXlaSHB0SWl3aWJTSTZleUp5SWpvaWRYTWlmWDA9
 
     service:
       telemetry:
@@ -84,4 +84,4 @@ spec:
         traces:
           receivers: [hubble, otlp]
           processors: [batch]
-          exporters: [jaeger]
+          exporters: [otlp]

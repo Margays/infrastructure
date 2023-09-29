@@ -10,19 +10,20 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: grafana-repository
+        namespace: flux-system
       version: 0.0.12
   values:
     cluster:
-      name: my-cluster
+      name: home
 
     externalServices:
       prometheus:
-        host: https://prometheus.example.com
-        username: "12345"
-        password: "It's a secret to everyone"
+        host: https://prometheus-prod-13-prod-us-east-0.grafana.net
+        username: "1082786"
+        password: "glc_eyJvIjoiODk2OTMyIiwibiI6ImdyYWZhbmEtYWdlbnQtYWdlbnQtdG9rZW4iLCJrIjoiOTJyN2VRQThBTjhFRDQzSGMyeDAyZHptIiwibSI6eyJyIjoidXMifX0="
       loki:
-        host: https://loki.example.com
-        username: "67890"
-        password: "It's a secret to everyone"
+        host: https://logs-prod-006.grafana.net
+        username: "642016"
+        password: "glc_eyJvIjoiODk2OTMyIiwibiI6ImdyYWZhbmEtYWdlbnQtYWdlbnQtdG9rZW4iLCJrIjoiOTJyN2VRQThBTjhFRDQzSGMyeDAyZHptIiwibSI6eyJyIjoidXMifX0="
 
-  interval: 1d
+  interval: 1h

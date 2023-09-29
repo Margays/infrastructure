@@ -20,8 +20,8 @@ build-nodes:
 	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/main.yml -u $(ANSIBLE_USER) -K
 
 .PHONY: k8s-requirements
-k8s_requirements:
-	test -d $(KUBESPRAY_INVENTORY_DIR)/.venv || python3 -m virtualenv $(KUBESPRAY_INVENTORY_DIR)/.venv
+k8s-requirements:
+	test -d $(KUBESPRAY_INVENTORY_DIR)/.venv || python3.11 -m virtualenv $(KUBESPRAY_INVENTORY_DIR)/.venv
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	pip install -r $(KUBESPRAY_DIR)/requirements.txt
 
