@@ -12,9 +12,4 @@ spec:
         name: prometheus-repository
         namespace: flux-system
       version: 48.2.2
-  values:
-    grafana:
-      enabled: false
-    prometheus-node-exporter:
-      hostRootFsMount: false
   interval: 1h

@@ -12,4 +12,13 @@ spec:
         name: grafana-repository
         namespace: flux-system
       version: 6.58.6
+  values:
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          url: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+          isDefault: true
   interval: 1h
