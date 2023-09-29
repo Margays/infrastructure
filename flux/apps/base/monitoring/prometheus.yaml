@@ -11,8 +11,5 @@ spec:
         kind: HelmRepository
         name: prometheus-repository
         namespace: flux-system
-      version: 48.2.2
-  values:
-    grafana:
-      enabled: true
+      version: 48.2.3
   interval: 1h

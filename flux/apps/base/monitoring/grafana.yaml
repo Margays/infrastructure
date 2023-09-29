@@ -13,12 +13,16 @@ spec:
         namespace: flux-system
       version: 6.58.6
   values:
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
+    sidecar:
+      alerts:
+        enabled: true
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL
       datasources:
-        - name: Prometheus
-          type: prometheus
-          url: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
-          isDefault: true
+        enabled: true
+        label: grafana_datasource
+        labelValue: "1"
   interval: 1h
