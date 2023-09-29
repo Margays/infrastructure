@@ -15,4 +15,6 @@ spec:
   values:
     grafana:
       enabled: false
+    prometheus-node-exporter:
+      hostRootFsMount: false
   interval: 1h
