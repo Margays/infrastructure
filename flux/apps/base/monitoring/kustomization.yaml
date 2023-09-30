@@ -4,3 +4,4 @@ resources:
   - namespace.yaml
   - repositories.yaml
   - prometheus.yaml
+  - datasources/github.yaml
