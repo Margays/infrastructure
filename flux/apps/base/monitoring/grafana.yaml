@@ -14,8 +14,8 @@ spec:
       version: 6.58.6
   values:
     sidecar:
-      # alerts:
-      #   enabled: true
+      alerts:
+        enabled: true
       dashboards:
         enabled: true
         label: grafana_dashboard
@@ -25,6 +25,6 @@ spec:
         enabled: true
         label: grafana_datasource
         labelValue: "1"
-      plugins:
-       - grafana-github-datasource
+    plugins:
+      - grafana-github-datasource
   interval: 1h
