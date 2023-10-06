@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-datasource
+  namespace: monitoring
+  labels:
+     grafana_datasource: "1"
+type: Opaque
+stringData:
+  githubdatasource.yaml: |-
+    # config file version
+    apiVersion: 1
+    datasources:
+      - name: GitHub Repo Insights
+        type: grafana-github-datasource
+        jsonData:
+          owner: 'OpenSourceMargays'
+          repository: 'org-management'
+        secureJsonData:
+          accessToken: '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'

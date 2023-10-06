@@ -3,6 +3,5 @@ kind: Kustomization
 resources:
   - ../base/cert-manager
   - ../base/cilium
-  - ../base/external-secrets
   - ../base/open-telemetry
   - ../base/storage/nfs
