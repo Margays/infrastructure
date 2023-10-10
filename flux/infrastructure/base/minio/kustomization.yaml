@@ -4,4 +4,5 @@ resources:
   - namespace.yaml
   - repository.yaml
   - minio.yaml
-  - admin-secret.yaml
+  - secrets/admin-secret.yaml
+  - secrets/grafana-secret-key.yaml

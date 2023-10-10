@@ -27,3 +27,15 @@ spec:
     - name: grafana-tempo
       purge: false
       policy: none
+    policies:
+    - name: grafana-tempo-rw
+      statements:
+        - resources:
+          - 'arn:aws:s3:::grafana-tempo/*'
+          actions:
+          - 's3:*'
+    users:
+    - accessKey: grafana
+      secretKey: grafana-secret-key
+      existingSecretKey: password
+      policy: grafana-tempo-rw
