@@ -25,6 +25,6 @@ spec:
         enabled: true
         label: grafana_datasource
         labelValue: "1"
-    plugins:
-      - grafana-github-datasource
+    # plugins:
+    #   - grafana-github-datasource
   interval: 1h
