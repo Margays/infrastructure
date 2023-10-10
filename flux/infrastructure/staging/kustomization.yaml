@@ -2,5 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base/cert-manager
+  - ../base/minio
   - ../base/open-telemetry
   - ../base/storage/nfs
