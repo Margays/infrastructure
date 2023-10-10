@@ -12,6 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: minio-repository
+        namespace: flux-system
       interval: 1m
   values:
     resources:
