@@ -27,15 +27,20 @@ spec:
     - name: grafana-tempo
       purge: false
       policy: none
-    - name: grafana-loki
+    - name: grafana-loki-chunks
+      purge: false
+      policy: none
+    - name: grafana-loki-ruler
+      purge: false
+      policy: none
+    - name: grafana-loki-admin
       purge: false
       policy: none
     policies:
     - name: grafana-rw
       statements:
         - resources:
-          - 'arn:aws:s3:::grafana-tempo/*'
-          - 'arn:aws:s3:::grafana-loki/*'
+          - 'arn:aws:s3:::grafana-*'
           actions:
           - 's3:*'
     users:

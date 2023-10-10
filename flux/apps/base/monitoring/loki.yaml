@@ -13,3 +13,17 @@ spec:
         namespace: flux-system
       version: 5.9.2
   interval: 1h
+  values:
+    loki:
+      storage:
+        bucketNames:
+          chunks: grafana-loki-chunks
+          ruler: grafana-loki-ruler
+          admin: grafana-loki-admin
+        type: s3
+        s3:
+          endpoint: minio.minio.svc
+          secretAccessKey: margay12345
+          accessKeyId: grafana
+          s3ForcePathStyle: false
+          insecure: false
