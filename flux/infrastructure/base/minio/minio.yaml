@@ -22,8 +22,7 @@ spec:
     persistence:
       enabled: false
     mode: standalone
-    rootUser: rootuser
-    rootPassword: rootpass123
+    existingSecret: minio-admin-secret
     bucket:
     - name: grafana-tempo
       purge: false
