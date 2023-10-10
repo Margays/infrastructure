@@ -23,7 +23,7 @@ spec:
       enabled: false
     mode: standalone
     existingSecret: minio-admin-secret
-    bucket:
+    buckets:
     - name: grafana-tempo
       purge: false
       policy: none
