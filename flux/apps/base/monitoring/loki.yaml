@@ -30,10 +30,12 @@ spec:
           admin: grafana-loki-admin
         type: s3
         s3:
-          s3: null
+          s3: http://minio.minio.svc:9000
           endpoint: http://minio.minio.svc:9000
           region: null
           secretAccessKey: margay12345
           accessKeyId: grafana
           s3ForcePathStyle: true
-          insecure: false
+          insecure: true
+      serviceMonitor:
+        enabled: true
