@@ -11,6 +11,10 @@ stringData:
     # config file version
     apiVersion: 1
     datasources:
-      - name: Loki
-        type: loki
-        url: http://loki-gateway
+    - name: Loki
+      type: loki
+      url: http://loki-gateway
+      jsonData:
+        httpHeaderName1: 'X-Scope-OrgID'
+      secureJsonData:
+        httpHeaderValue1: 'tenant-1'

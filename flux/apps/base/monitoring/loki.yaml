@@ -30,8 +30,10 @@ spec:
           admin: grafana-loki-admin
         type: s3
         s3:
-          endpoint: minio.minio.svc
+          s3: null
+          endpoint: http://minio.minio.svc:9000
+          region: null
           secretAccessKey: margay12345
           accessKeyId: grafana
-          s3ForcePathStyle: false
+          s3ForcePathStyle: true
           insecure: false
