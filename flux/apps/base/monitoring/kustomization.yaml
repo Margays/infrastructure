@@ -5,5 +5,5 @@ resources:
   - repositories.yaml
   - prometheus.yaml
   - grafana.yaml
-  - loki.yaml
+  # - loki.yaml
   - promtail.yaml
