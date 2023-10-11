@@ -15,6 +15,14 @@ spec:
   interval: 1h
   values:
     loki:
+      config: |
+        auth_enabled: true
+      ingress:
+        enabled: false
+      gateway: 
+        enabled: true
+        basicAuth:
+          enabled: false
       storage:
         bucketNames:
           chunks: grafana-loki-chunks
