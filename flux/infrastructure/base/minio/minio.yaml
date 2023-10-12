@@ -1,0 +1,50 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: minio
+  namespace: minio
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: minio
+      version: "5.0.14"
+      sourceRef:
+        kind: HelmRepository
+        name: minio-repository
+        namespace: flux-system
+      interval: 1m
+  values:
+    resources:
+      requests:
+        memory: 1Gi
+    replicas: 1
+    persistence:
+      enabled: false
+    mode: standalone
+    existingSecret: minio-admin-secret
+    buckets:
+    - name: grafana-tempo
+      purge: false
+      policy: none
+    - name: grafana-loki-chunks
+      purge: false
+      policy: none
+    - name: grafana-loki-ruler
+      purge: false
+      policy: none
+    - name: grafana-loki-admin
+      purge: false
+      policy: none
+    policies:
+    - name: grafana-rw
+      statements:
+        - resources:
+          - 'arn:aws:s3:::grafana-*'
+          actions:
+          - 's3:*'
+    users:
+    - accessKey: grafana
+      secretKey: grafana-secret-key
+      existingSecretKey: password
+      policy: grafana-rw

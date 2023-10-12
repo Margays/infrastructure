@@ -10,5 +10,32 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: grafana-repository
+        namespace: flux-system
       version: 5.9.2
-  interval: 1d
+  interval: 1h
+  values:
+    loki:
+      # config: |
+      #   auth_enabled: true
+      # ingress:
+      #   enabled: false
+      # gateway: 
+      #   enabled: true
+      #   basicAuth:
+      #     enabled: false
+      storage:
+        bucketNames:
+          chunks: grafana-loki-chunks
+          ruler: grafana-loki-ruler
+          admin: grafana-loki-admin
+        type: s3
+        s3:
+          s3: http://minio.minio.svc.cluster.local.:9000/
+          # endpoint: http://minio.minio.svc:9000
+          region: null
+          secretAccessKey: k0ckeDiUv97kjtOsEDFqrrPnga5gplumgukCDbkf
+          accessKeyId: QmLRc9WptGKhhMVqlM1z
+          s3ForcePathStyle: true
+          insecure: true
+      serviceMonitor:
+        enabled: true

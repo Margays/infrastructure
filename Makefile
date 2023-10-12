@@ -6,6 +6,7 @@ ANSIBLE_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/ansible
 KUBESPRAY_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/kubespray
 ANSIBLE_DIR := $(MKFILE_DIR)/ansible
 KUBESPRAY_DIR := $(MKFILE_DIR)/kubespray
+KIND_CONFIG := $(MKFILE_DIR)/kind-config.yaml
 
 .ONESHELL:
 
@@ -20,8 +21,8 @@ build-nodes:
 	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/main.yml -u $(ANSIBLE_USER) -K
 
 .PHONY: k8s-requirements
-k8s_requirements:
-	test -d $(KUBESPRAY_INVENTORY_DIR)/.venv || python3 -m virtualenv $(KUBESPRAY_INVENTORY_DIR)/.venv
+k8s-requirements:
+	test -d $(KUBESPRAY_INVENTORY_DIR)/.venv || python3.11 -m virtualenv $(KUBESPRAY_INVENTORY_DIR)/.venv
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	pip install -r $(KUBESPRAY_DIR)/requirements.txt
 
@@ -36,6 +37,12 @@ delete-kubernetes: k8s-requirements
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	cd $(KUBESPRAY_DIR)
 	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K reset.yml
+
+build-kind:
+	kind create cluster --name kind --config=$(KIND_CONFIG)
+
+delete-kind:
+	kind delete cluster --name kind
 
 .PHONY: flux
 flux:

@@ -11,9 +11,9 @@ spec:
         kind: HelmRepository
         name: cilium-repository
         namespace: flux-system
-      version: 1.14.0
+      version: 1.14.2
   values:
-    kubeProxyReplacement: true
+    kubeProxyReplacement: 'strict'
     k8sServiceHost: '192.168.1.101'
     k8sServicePort: 6443
     policyEnforcementMode: 'default'    # enforce network policies
@@ -58,4 +58,6 @@ spec:
           - flow
           - icmp
           - http
+      dashboards:
+        enabled: true
   interval: 1h
