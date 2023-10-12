@@ -7,6 +7,7 @@ KUBESPRAY_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/kubespray
 ANSIBLE_DIR := $(MKFILE_DIR)/ansible
 KUBESPRAY_DIR := $(MKFILE_DIR)/kubespray
 KIND_CONFIG := $(MKFILE_DIR)/kind-config.yaml
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 .ONESHELL:
 
@@ -54,9 +55,10 @@ ifndef GITHUB_TOKEN
 endif
 	flux bootstrap git \
       --url=https://github.com/OpenSourceMargays/infrastructure.git \
+	  --token-auth=true \
       --username=$(GITHUB_USERNAME) \
       --password=$(GITHUB_TOKEN) \
-      --token-auth=true \
+	  --branch=$(BRANCH) \
       --path=flux/clusters/$(ENVIRONMENT)
 	kubectl apply -k flux/clusters/$(ENVIRONMENT)
 
