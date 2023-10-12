@@ -45,7 +45,7 @@ spec:
           actions:
           - 's3:*'
     users:
-    - accessKey: margay-admin
+    - accessKey: grafana
       secretKey: grafana-secret-key
       existingSecretKey: password
       policy: grafana-rw
