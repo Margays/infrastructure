@@ -10,8 +10,32 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: grafana-repository
+        namespace: flux-system
       version: 1.6.10
-  interval: 1d
+  interval: 1m
   values:
-    tempo:
-      
+    storage:
+      trace:
+        backend: s3
+        s3:
+          access_key: 'margay-admin'
+          secret_key: 'margay12345'
+          bucket: 'grafana-tempo'
+          endpoint: 'minio.minio.svc:9000'
+          insecure: true
+    #MinIO storage configuration
+    minio:
+      enabled: false
+    traces:
+      otlp:
+        grpc:
+          enabled: true
+        http:
+          enabled: true
+      zipkin:
+        enabled: false
+      jaeger:
+        thriftHttp:
+          enabled: false
+      opencensus:
+        enabled: false
