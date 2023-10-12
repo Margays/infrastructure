@@ -40,7 +40,7 @@ spec:
     - name: grafana-rw
       statements:
         - resources:
-          - 'arn:aws:s3:::grafana-*'
+          - 'arn:aws:s3:::grafana-*/*'
           actions:
           - 's3:*'
     users:

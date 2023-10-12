@@ -13,6 +13,8 @@ stringData:
     datasources:
     - name: Loki
       type: loki
+      access: proxy
+      isDefault: true
       url: http://loki-gateway
       jsonData:
         httpHeaderName1: 'X-Scope-OrgID'
