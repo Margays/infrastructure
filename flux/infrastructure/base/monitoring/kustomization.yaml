@@ -3,7 +3,8 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - repositories.yaml
-  - prometheus.yaml
-  - grafana.yaml
-  - loki.yaml
-  - promtail.yaml
+  - metrics/prometheus.yaml
+  - grafana/grafana.yaml
+  - logs/loki.yaml
+  - logs/promtail.yaml
+  - traces/tempo.yaml
