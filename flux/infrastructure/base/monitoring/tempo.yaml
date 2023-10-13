@@ -18,8 +18,8 @@ spec:
       trace:
         backend: s3
         s3:
-          access_key: 'margay-admin'
-          secret_key: 'margay12345'
+          access_key: 'grafana'
+          secret_key: 'this-is-a-secret-key'
           bucket: 'grafana-tempo'
           endpoint: 'minio.minio.svc:9000'
           insecure: true
