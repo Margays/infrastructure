@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tempo-datasource
+  namespace: monitoring
+  labels:
+    grafana_datasource: "1"
+type: Opaque
+stringData:
+  tempo.yaml: |-
+    # config file version
+    apiVersion: 1
+    datasources:
+    - name: prometheus
+      type: prometheus
+      uid: prometheus
+      access: proxy
+      url: http://prometheus:9090
+      isDefault: false
+      version: 1
+      editable: false
+      basicAuth: false
+      jsonData:
+        httpMethod: 'GET'
+        exemplarTraceIDDestination:
+          name: 'traceID'
+          url: 'http://localhost:3000/explore?orgId=1&left=%5B%22now-1h%22,%22now%22,%22tempo%22,%7B%22query%22:%22$${value}%22%7D%5D'

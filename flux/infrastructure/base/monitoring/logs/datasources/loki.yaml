@@ -1,20 +1,29 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: github-datasource
+  name: loki-datasource
   namespace: monitoring
   labels:
-     grafana_datasource: "1"
+    grafana_datasource: "1"
 type: Opaque
 stringData:
   loki.yaml: |-
     # config file version
     apiVersion: 1
     datasources:
-    - name: Loki
+    - name: loki
       type: loki
+      access: proxy
+      orgId: 1
       url: http://loki-gateway
+      version: 1
+      editable: false
       jsonData:
         httpHeaderName1: 'X-Scope-OrgID'
+        derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: traceID=(\w+)
+          name: TraceID
+          url: $${__value.raw}
       secureJsonData:
         httpHeaderValue1: 'tenant-1'
