@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tempo-datasource
+  namespace: monitoring
+  labels:
+    grafana_datasource: "1"
+type: Opaque
+stringData:
+  tempo.yaml: |-
+    # config file version
+    apiVersion: 1
+    datasources:
+    - name: tempo
+      type: tempo
+      uid: tempo
+      access: proxy
+      url: http://tempo-query-frontend:3100
+      isDefault: false
+      version: 1
+      editable: false
+      basicAuth: false
