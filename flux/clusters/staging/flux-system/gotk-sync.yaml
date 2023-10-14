@@ -8,7 +8,7 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: monitoring
+    branch: lwencel
   secretRef:
     name: flux-system
   url: https://github.com/OpenSourceMargays/infrastructure.git
