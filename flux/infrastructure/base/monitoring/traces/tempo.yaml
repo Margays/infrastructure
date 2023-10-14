@@ -39,3 +39,10 @@ spec:
           enabled: false
       opencensus:
         enabled: false
+    memcachedExporter:
+      enabled: true
+    metaMonitoring:
+      serviceMonitor:
+        enabled: true
+    gateway:
+      enabled: true
