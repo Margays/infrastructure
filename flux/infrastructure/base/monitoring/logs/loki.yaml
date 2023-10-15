@@ -37,15 +37,7 @@ spec:
           accessKeyId: grafana
           s3ForcePathStyle: true
           insecure: true
-      serviceMonitor:
-        enabled: true
-        labels:
-          release: kube-prometheus-stack
-  postRenderers:
-    - kustomize:
-        patchesStrategicMerge:
-          - apiVersion: monitoring.coreos.com/v1
-            kind: ServiceMonitor
-            metadata:
-              labels:
-                release: kube-prometheus-stack
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
