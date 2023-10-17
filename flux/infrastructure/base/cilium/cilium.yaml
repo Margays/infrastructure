@@ -14,9 +14,9 @@ spec:
       version: 1.14.2
   values:
     # Need to enable cgroups v2 support for wsl and docker dektop
-    # kubeProxyReplacement: 'strict'
-    # k8sServiceHost: '192.168.1.101'
-    # k8sServicePort: 6443
+    kubeProxyReplacement: 'strict'
+    k8sServiceHost: '192.168.1.101'
+    k8sServicePort: 6443
     policyEnforcementMode: 'always'    # enforce network policies
     policyAuditMode: true            # do not block traffic
     hostFirewall:

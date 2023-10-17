@@ -19,3 +19,4 @@ kubeadmConfigPatches:
   metricsBindAddress: 0.0.0.0
 networking:
   disableDefaultCNI: true
+  kubeProxyMode: none
