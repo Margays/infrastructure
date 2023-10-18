@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: hubble-ui
+  namespace: kube-system
+spec:
+  endpointSelector:
+    matchLabels:
+      io.cilium.k8s.policy.serviceaccount: hubble-ui
+  egress:
+  # hubble-ui -> apiserver
+  - toEntities:
+    - kube-apiserver
+    toPorts:
+    - ports:
+      - port: '6443'
+        protocol: TCP
+  # hubble-ui -> hubble-relay
+  - toEndpoints:
+    - matchLabels:
+        io.cilium.k8s.policy.serviceaccount: hubble-relay
+    toPorts:
+    - ports:
+      - port: '4245'
+        protocol: TCP
+  # hubble-ui -> coredns
+  - toEndpoints:
+    - matchLabels:
+        io.cilium.k8s.policy.serviceaccount: coredns
+    toPorts:
+    - ports:
+      - port: '53'
+        protocol: UDP

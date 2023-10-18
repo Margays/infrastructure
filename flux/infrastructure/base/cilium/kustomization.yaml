@@ -3,4 +3,12 @@ kind: Kustomization
 resources:
   - repository.yaml
   - cilium.yaml
-  - ./rules
+  - ./network-policies
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: cilium-config
+    files:
+      - values.yaml

@@ -30,9 +30,17 @@ specs:
       matchLabels:
         io.cilium.k8s.policy.serviceaccount: hubble-relay
     ingress:
-    # kubelet -> hubble relay probes
+    # kubelet -> hubble relay
     - fromEntities:
       - host
+      toPorts:
+      - ports:
+        - port: '4245'
+          protocol: TCP
+    # hubble-ui -> hubble relay
+    - fromEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: hubble-ui
       toPorts:
       - ports:
         - port: '4245'

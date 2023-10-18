@@ -66,5 +66,8 @@ endif
       --path=flux/clusters/$(ENVIRONMENT)
 	kubectl apply -k flux/clusters/$(ENVIRONMENT)
 
+.PHONY: bootstrap-kind
+bootstrap-kind: build-kind flux
+
 .PHONY: bootstrap
 bootstrap: build-nodes build-kubernetes flux

@@ -1,0 +1,48 @@
+# Need to enable cgroups v2 support for wsl and docker dektop
+kubeProxyReplacement: 'strict'
+k8sServiceHost: 'kind-control-plane'
+k8sServicePort: 6443
+policyEnforcementMode: 'always'  # enforce network policies
+policyAuditMode: true            # do not block traffic
+hostFirewall:
+  enabled: true                  # enable host policies
+extraConfig:
+  allow-localhost: policy        # enable policies for local host
+hostServices:
+  enabled: true
+externalIPs:
+  enabled: true
+nodePort:
+  enabled: true
+hostPort:
+  enabled: true
+image:
+  pullPolicy: IfNotPresent
+ipam:
+  mode: kubernetes
+# bgpControlPlane:
+#   enabled: true
+# gatewayAPI:
+#   enabled: true
+prometheus:
+  enabled: true
+operator:
+  prometheus:
+    enabled: true
+hubble:
+  enabled: true
+  ui:
+    enabled: true
+  relay:
+    enabled: true
+    rollOutPods: true
+  metrics:
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - icmp
+      - http
+  dashboards:
+    enabled: true

@@ -2,13 +2,14 @@
 CILIUM_VERSION="1.14.2"
 FLUX_VERSION="1.0.1"
 
-docker_images=(
+DOCKER_IMAGES=(
     "quay.io/cilium/cilium:v${CILIUM_VERSION}"
     "ghcr.io/fluxcd/kustomize-controller:v${FLUX_VERSION}"
 )
+SCRIPT_PATH=$(dirname $(realpath -s $0))
 
 preload_images() {
-    for image in ${docker_images[@]}; do
+    for image in ${DOCKER_IMAGES[@]}; do
         echo "Preloading $image"
         docker pull $image
         kind load docker-image $image
@@ -22,7 +23,7 @@ install_cilium() {
     helm install cilium cilium/cilium \
         --version ${CILIUM_VERSION} \
         --namespace kube-system \
-        --values ./kind/cilium-values.yaml
+        --values ${SCRIPT_PATH}/../flux/infrastructure/base/cilium/values.yaml
 
     # Download and install cilium cli
     if ! command -v cilium &> /dev/null

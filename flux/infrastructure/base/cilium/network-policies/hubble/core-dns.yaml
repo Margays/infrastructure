@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: core-dns-hubble-ui
+  namespace: kube-system
+specs:
+  - endpointSelector:
+      # apply to core dns pods
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: coredns
+    ingress:
+    # hubble ui -> core dns
+    - fromEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: hubble-ui
+      toPorts:
+      - ports:
+        - port: '53'
+          protocol: UDP
