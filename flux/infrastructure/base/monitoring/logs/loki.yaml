@@ -6,12 +6,12 @@ metadata:
 spec:
   chart:
     spec:
-      chart: loki
+      chart: loki-distributed
       sourceRef:
         kind: HelmRepository
         name: grafana-repository
         namespace: flux-system
-      version: 5.9.2
+      version: 0.74.6
   interval: 1h
   values:
     loki:
@@ -37,5 +37,7 @@ spec:
           accessKeyId: grafana
           s3ForcePathStyle: true
           insecure: true
-      serviceMonitor:
-        enabled: true
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack

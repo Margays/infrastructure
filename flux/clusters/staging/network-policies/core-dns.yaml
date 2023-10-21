@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: core-dns-kustomize-controller
+  namespace: kube-system
+specs:
+  - endpointSelector:
+      # apply to core dns pods
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: coredns
+    ingress:
+    # kustomize controller -> core dns
+    - fromEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: kustomize-controller
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: helm-controller
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: source-controller
+      toPorts:
+      - ports:
+        - port: '53'
+          protocol: UDP

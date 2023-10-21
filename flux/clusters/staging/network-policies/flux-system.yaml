@@ -1,0 +1,35 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: flux-system
+  namespace: flux-system
+specs:
+  - nodeSelector:
+      # apply to all nodes
+      matchLabels: {}
+    egress:
+    - toEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: kustomize-controller
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: notification-controller
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: helm-controller
+      toPorts:
+      - ports:
+        - port: '9440'
+          protocol: TCP
+  - nodeSelector:
+      # apply to all nodes
+      matchLabels: {}
+    egress:
+    - toEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: source-controller
+      toPorts:
+      - ports:
+        - port: '9440'
+          protocol: TCP
+      - ports:
+        - port: '9090'
+          protocol: TCP

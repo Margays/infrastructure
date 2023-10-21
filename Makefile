@@ -6,7 +6,8 @@ ANSIBLE_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/ansible
 KUBESPRAY_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/kubespray
 ANSIBLE_DIR := $(MKFILE_DIR)/ansible
 KUBESPRAY_DIR := $(MKFILE_DIR)/kubespray
-KIND_CONFIG := $(MKFILE_DIR)/kind-config.yaml
+KIND_DIR := $(MKFILE_DIR)/kind
+KIND_CONFIG := $(KIND_DIR)/kind-config.yaml
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 .ONESHELL:
@@ -39,9 +40,12 @@ delete-kubernetes: k8s-requirements
 	cd $(KUBESPRAY_DIR)
 	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K reset.yml
 
+.PHONY: build-kind
 build-kind:
 	kind create cluster --name kind --config=$(KIND_CONFIG)
+	bash $(KIND_DIR)/setup.sh
 
+.PHONY: delete-kind
 delete-kind:
 	kind delete cluster --name kind
 
@@ -59,8 +63,12 @@ endif
       --username=$(GITHUB_USERNAME) \
       --password=$(GITHUB_TOKEN) \
 	  --branch=$(BRANCH) \
-      --path=flux/clusters/$(ENVIRONMENT)
+      --path=flux/clusters/$(ENVIRONMENT) \
+	  --network-policy=false
 	kubectl apply -k flux/clusters/$(ENVIRONMENT)
+
+.PHONY: bootstrap-kind
+bootstrap-kind: build-kind flux
 
 .PHONY: bootstrap
 bootstrap: build-nodes build-kubernetes flux
