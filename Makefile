@@ -63,7 +63,8 @@ endif
       --username=$(GITHUB_USERNAME) \
       --password=$(GITHUB_TOKEN) \
 	  --branch=$(BRANCH) \
-      --path=flux/clusters/$(ENVIRONMENT)
+      --path=flux/clusters/$(ENVIRONMENT) \
+	  --network-policy=false
 	kubectl apply -k flux/clusters/$(ENVIRONMENT)
 
 .PHONY: bootstrap-kind
