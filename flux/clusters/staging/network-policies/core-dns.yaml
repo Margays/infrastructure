@@ -13,6 +13,10 @@ specs:
     - fromEndpoints:
       - matchLabels:
           io.cilium.k8s.policy.serviceaccount: kustomize-controller
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: helm-controller
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: source-controller
       toPorts:
       - ports:
         - port: '53'
