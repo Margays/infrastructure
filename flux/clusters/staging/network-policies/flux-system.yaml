@@ -4,32 +4,32 @@ metadata:
   name: flux-system
   namespace: flux-system
 specs:
-  - endpointSelector:
-      matchLabels:
-        io.cilium.k8s.policy.serviceaccount: cert-manager-webhook
-    ingress:
-      # cert-manager-webhook -> kubelet
-      - fromEntities:
-          - remote-node
-        toPorts:
-          - ports:
-              - port: "10250"
-                protocol: TCP
-      - fromEntities:
-          - host
-        toPorts:
-          - ports:
-              - port: "6080"
-                protocol: TCP
   - nodeSelector:
       # apply to all nodes
       matchLabels: {}
     egress:
-    # kubelet -> cert-manager-webhook
     - toEndpoints:
       - matchLabels:
-          io.cilium.k8s.policy.serviceaccount: cert-manager-webhook
+          io.cilium.k8s.policy.serviceaccount: kustomize-controller
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: notification-controller
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: helm-controller
       toPorts:
       - ports:
-        - port: '6080'
+        - port: '9440'
+          protocol: TCP
+  - nodeSelector:
+      # apply to all nodes
+      matchLabels: {}
+    egress:
+    - toEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: source-controller
+      toPorts:
+      - ports:
+        - port: '9440'
+          protocol: TCP
+      - ports:
+        - port: '9090'
           protocol: TCP
