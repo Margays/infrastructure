@@ -5,7 +5,7 @@ resources:
   - ../base/minio
   - ../base/cilium
   # - ../base/open-telemetry
-  # - ../base/monitoring
+  - ../base/monitoring
   - ../base/storage/nfs
 
 patches:
