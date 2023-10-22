@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: core-dns-monitoring-tempo
+  namespace: kube-system
+specs:
+  - endpointSelector:
+      # apply to core dns pods
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: coredns
+    ingress:
+    # kustomize controller -> core dns
+    - fromEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: tempo
+      toPorts:
+      - ports:
+        - port: '53'
+          protocol: UDP

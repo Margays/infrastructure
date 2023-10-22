@@ -8,6 +8,16 @@ DOCKER_IMAGES=(
 )
 SCRIPT_PATH=$(dirname $(realpath -s $0))
 
+check_requirements() {
+    local c1=$(docker exec kind-control-plane ls -al /proc/self/ns/cgroup)
+    local c2=$(docker exec kind-worker ls -al /proc/self/ns/cgroup)
+    local c3=$(ls -al /proc/self/ns/cgroup)
+    if [[ "$c1" == "$c2" && "$c2" == "$c3" ]]; then
+        echo "ERROR: Contaiers are not running in a unique namespace."
+        exit 1
+    fi
+}
+
 preload_images() {
     for image in ${DOCKER_IMAGES[@]}; do
         echo "Preloading $image"
