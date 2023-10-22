@@ -9,13 +9,23 @@ DOCKER_IMAGES=(
 SCRIPT_PATH=$(dirname $(realpath -s $0))
 
 check_requirements() {
+    # Check cgroup namespace
     local c1=$(docker exec kind-control-plane ls -al /proc/self/ns/cgroup)
     local c2=$(docker exec kind-worker ls -al /proc/self/ns/cgroup)
     local c3=$(ls -al /proc/self/ns/cgroup)
     if [[ "$c1" == "$c2" && "$c2" == "$c3" ]]; then
-        echo "ERROR: Contaiers are not running in a unique namespace."
+        echo "ERROR: Some containers share cgroup namespace."
         exit 1
     fi
+    echo "OK - Docker cgroup namespace"
+
+    # Check docker cgroup driver
+    local c1="$(docker info -f '{{.CgroupVersion}}')"
+    if [[ "$c1" != "2" ]]; then
+        echo "ERROR: Docker do not use cgroup driver in version."
+        exit 1
+    fi
+    echo "OK - Docker cgroup version"
 }
 
 preload_images() {
@@ -51,6 +61,7 @@ install_cilium() {
 }
 
 main() {
+    check_requirements
     preload_images
     # There is no CNI on kind, so we need to install cilium before we can install flux
     install_cilium

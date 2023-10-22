@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: core-dns-kustomize-controller
+  name: core-dns-flux
   namespace: kube-system
 specs:
   - endpointSelector:
