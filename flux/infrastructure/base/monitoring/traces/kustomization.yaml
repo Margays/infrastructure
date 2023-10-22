@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - tempo.yaml
   - datasources/tempo.yaml
+  - network-policies/

@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cert-manager-webhook
+  namespace: cert-manager
+specs:
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: minio-sa
+    ingress:
+      # cert-manager-webhook -> kubelet
+      - fromEndpoints:
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: tempo
+        toPorts:
+          - ports:
+              - port: "9000"
+                protocol: TCP
+ 

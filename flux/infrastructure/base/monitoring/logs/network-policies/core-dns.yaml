@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: core-dns-flux
+  name: core-dns-monitoring-loki
   namespace: kube-system
 specs:
   - endpointSelector:
@@ -12,11 +12,7 @@ specs:
     # kustomize controller -> core dns
     - fromEndpoints:
       - matchLabels:
-          io.cilium.k8s.policy.serviceaccount: kustomize-controller
-      - matchLabels:
-          io.cilium.k8s.policy.serviceaccount: helm-controller
-      - matchLabels:
-          io.cilium.k8s.policy.serviceaccount: source-controller
+          io.cilium.k8s.policy.serviceaccount: loki-loki-distributed
       toPorts:
       - ports:
         - port: '53'

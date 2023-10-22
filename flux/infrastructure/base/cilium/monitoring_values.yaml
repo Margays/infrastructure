@@ -1,0 +1,32 @@
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: kube-prometheus-stack
+dashboards:
+  enabled: true
+operator:
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
+  dashboards:
+    enabled: true
+hubble:
+  relay:
+    prometheus:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        labels:
+          release: kube-prometheus-stack
+  metrics:
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
+    dashboards:
+      enabled: true

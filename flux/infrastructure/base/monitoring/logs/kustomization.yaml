@@ -4,3 +4,4 @@ resources:
   - loki.yaml
   - promtail.yaml
   - datasources/loki.yaml
+  - ./network-policies/
