@@ -12,4 +12,5 @@ configMapGenerator:
   - name: cilium-config
     namespace: kube-system
     files:
-      - values.yaml
+      - main_values.yaml
+      - monitoring_values.yaml

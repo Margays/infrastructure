@@ -15,5 +15,8 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: cilium-config
-      valuesKey: values.yaml
+      valuesKey: main_values.yaml
+    - kind: ConfigMap
+      name: cilium-config
+      valuesKey: monitoring_values.yaml
   interval: 1h

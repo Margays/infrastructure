@@ -20,15 +20,8 @@ image:
   pullPolicy: IfNotPresent
 ipam:
   mode: kubernetes
-# bgpControlPlane:
-#   enabled: true
-# gatewayAPI:
-#   enabled: true
-prometheus:
-  enabled: true
 operator:
-  prometheus:
-    enabled: true
+  enabled: true
 hubble:
   enabled: true
   ui:
@@ -37,12 +30,12 @@ hubble:
     enabled: true
     rollOutPods: true
   metrics:
+    enableOpenMetrics: true
     enabled:
-      - dns:query;ignoreAAAA
+      - dns
       - drop
       - tcp
       - flow
+      - port-distribution
       - icmp
-      - http
-  dashboards:
-    enabled: true
+      - httpV2:exemplars=true;labelsContext=source_ip\,source_namespace\,source_workload\,destination_ip\,destination_namespace\,destination_workload\,traffic_direction
