@@ -4,6 +4,34 @@ metadata:
   name: core-dns
   namespace: kube-system
 specs:
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: coredns
+    ingress:
+    # kubelet -> core dns
+    - fromEntities:
+      - host
+      toPorts:
+      - ports:
+        - port: '8080'
+          protocol: TCP
+        - port: '8181'
+          protocol: TCP
+    egress:
+    # core dns -> upstream DNS
+    - toCIDR:
+      - 192.168.1.1/32
+      toPorts:
+      - ports:
+        - port: '53'
+          protocol: UDP
+    # core dns -> api server
+    - toEntities:
+      - kube-apiserver
+      toPorts:
+      - ports:
+        - port: '6443'
+          protocol: TCP
   - nodeSelector:
       # apply to master nodes
       matchLabels:
@@ -31,32 +59,3 @@ specs:
           protocol: TCP
         - port: '8181'
           protocol: TCP
-  - endpointSelector:
-      # apply to core dns pods
-      matchLabels:
-        io.cilium.k8s.policy.serviceaccount: coredns
-    ingress:
-    # kubelet -> core dns probes
-    - fromEntities:
-      - host
-      toPorts:
-      - ports:
-        - port: '8080'
-          protocol: TCP
-        - port: '8181'
-          protocol: TCP
-    egress:
-    # core dns -> api server
-    - toEntities:
-      - kube-apiserver
-      toPorts:
-      - ports:
-        - port: '6443'
-          protocol: TCP
-    # core dns -> upstream DNS
-    - toCIDR:
-      - 192.168.1.1/32
-      toPorts:
-      - ports:
-        - port: '53'
-          protocol: UDP

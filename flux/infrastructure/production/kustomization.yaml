@@ -9,9 +9,16 @@ resources:
   - ../base/storage/nfs
 
 patches:
-  - path: cilium-patch.yaml
+  - path: patches/patch.yaml
     target:
       group: helm.toolkit.fluxcd.io
       version: v2beta1
       kind: HelmRelease
       name: cilium
+  - path: patches/core-dns-network-policy.yaml
+    target:
+      group: cilium.io
+      version: v2
+      kind: CiliumNetworkPolicy
+      name: core-dns
+      namespace: kube-system
