@@ -59,7 +59,7 @@ endif
 .PHONY: setup-requirements
 setup-requirements:
 ifeq ($(PREINSTALL_REQUIREMENTS),true)
-    bash $(MKFILE_DIR)/setup_requirements.sh
+	bash $(MKFILE_DIR)/utils/setup_requirements.sh
 endif
 
 .PHONY: flux
