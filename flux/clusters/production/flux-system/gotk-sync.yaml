@@ -8,10 +8,10 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: main
+    branch: hardening
   secretRef:
     name: flux-system
-  url: https://github.com/OpenSourceMargays/infrastructure.git
+  url: ssh://git@github.com/OpenSourceMargays/infrastructure.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
