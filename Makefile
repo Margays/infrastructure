@@ -1,12 +1,13 @@
 ANSIBLE_USER ?= margay
 ENVIRONMENT ?= production
+PREINSTALL_REQUIREMENTS ?= false
 
 MKFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 ANSIBLE_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/ansible
 KUBESPRAY_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/kubespray
 ANSIBLE_DIR := $(MKFILE_DIR)/ansible
 KUBESPRAY_DIR := $(MKFILE_DIR)/kubespray
-KIND_DIR := $(MKFILE_DIR)/kind
+KIND_DIR := $(MKFILE_DIR)/utils/kind
 KIND_CONFIG := $(KIND_DIR)/kind-config.yaml
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
@@ -49,24 +50,31 @@ build-kind:
 delete-kind:
 	kind delete cluster --name kind
 
-.PHONY: check-requirements
-check-requirements:
+.PHONY: check-env-variables
+check-env-variables:
 ifndef GITHUB_SSH_PRIVATE_KEY
 	$(error GITHUB_SSH_PRIVATE_KEY is undefined)
 endif
 
-.PHONY: check-requirements flux
-flux:
+.PHONY: setup-requirements
+setup-requirements:
+ifeq ($(PREINSTALL_REQUIREMENTS),true)
+    bash $(MKFILE_DIR)/setup_requirements.sh
+endif
+
+.PHONY: flux
+flux: check-env-variables
 	flux bootstrap git \
       --url=ssh://git@github.com/OpenSourceMargays/infrastructure.git \
       --private-key-file=$(GITHUB_SSH_PRIVATE_KEY) \
 	  --branch=$(BRANCH) \
       --path=flux/clusters/$(ENVIRONMENT) \
-	  --network-policy=false
+	  --network-policy=false \
+	  --silent
 	kubectl apply -k flux/clusters/$(ENVIRONMENT)
 
 .PHONY: bootstrap-kind
-bootstrap-kind: check-requirements build-kind flux
+bootstrap-kind: check-env-variables setup-requirements build-kind flux
 
 .PHONY: bootstrap
 bootstrap: build-nodes build-kubernetes flux
