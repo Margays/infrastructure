@@ -2,9 +2,6 @@
 ## Setup staging/development cluster using Kind
 ```bash
 git checkout -b <branch-name>
-make build-kind
-
-export GITHUB_USERNAME="<username>"
-export GITHUB_TOKEN="<personal access token>"
-make flux
+export GITHUB_SSH_PRIVATE_KEY="${HOME}/.ssh/id_ed25519"
+make bootstrap-kind
 ```

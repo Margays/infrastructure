@@ -49,26 +49,24 @@ build-kind:
 delete-kind:
 	kind delete cluster --name kind
 
-.PHONY: flux
+.PHONY: check-requirements
+check-requirements:
+ifndef GITHUB_SSH_PRIVATE_KEY
+	$(error GITHUB_SSH_PRIVATE_KEY is undefined)
+endif
+
+.PHONY: check-requirements flux
 flux:
-ifndef GITHUB_USERNAME
-	$(error GITHUB_USERNAME is undefined)
-endif
-ifndef GITHUB_TOKEN
-	$(error GITHUB_TOKEN is undefined)
-endif
 	flux bootstrap git \
-      --url=https://github.com/OpenSourceMargays/infrastructure.git \
-	  --token-auth=true \
-      --username=$(GITHUB_USERNAME) \
-      --password=$(GITHUB_TOKEN) \
+      --url=ssh://git@github.com/OpenSourceMargays/infrastructure.git \
+      --private-key-file=$(GITHUB_SSH_PRIVATE_KEY) \
 	  --branch=$(BRANCH) \
       --path=flux/clusters/$(ENVIRONMENT) \
 	  --network-policy=false
 	kubectl apply -k flux/clusters/$(ENVIRONMENT)
 
 .PHONY: bootstrap-kind
-bootstrap-kind: build-kind flux
+bootstrap-kind: check-requirements build-kind flux
 
 .PHONY: bootstrap
 bootstrap: build-nodes build-kubernetes flux
