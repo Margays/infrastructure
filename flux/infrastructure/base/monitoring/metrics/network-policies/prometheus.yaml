@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: prometheus
+  namespace: monitoring
+specs:
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: kube-prometheus-stack-prometheus
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: kube-prometheus-stack-operator
+        toPorts:
+          - ports:
+              - port: "10250"
+                protocol: TCP
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: kube-prometheus-stack-operator
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: kube-prometheus-stack-prometheus
+        toPorts:
+          - ports:
+              - port: "10250"
+                protocol: TCP

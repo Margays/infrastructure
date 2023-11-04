@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: grafana
+  namespace: monitoring
+specs:
+  - endpointSelector:
+      matchLabels:
+        io.cilium.k8s.policy.serviceaccount: grafana
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              io.cilium.k8s.policy.serviceaccount: kube-prometheus-stack-prometheus
+        toPorts:
+          - ports:
+              - port: "9090"
+                protocol: TCP
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
