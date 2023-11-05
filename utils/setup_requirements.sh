@@ -71,6 +71,20 @@ setup_cilium() {
     echo "Cilium version: $(cilium version)"
 }
 
+setup_hubblecli() {
+    if ! command -v hubble &> /dev/null
+    then
+        HUBBLE_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/hubble/master/stable.txt)
+        CLI_ARCH=amd64
+        if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+        curl -L --fail --remote-name-all https://github.com/cilium/hubble/releases/download/${HUBBLE_VERSION}/hubble-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+        sha256sum --check hubble-linux-${CLI_ARCH}.tar.gz.sha256sum
+        sudo tar xzvfC hubble-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+        rm hubble-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+    fi
+    echo "Hubble version: $(hubble version)"
+}
+
 setup_make() {
     if ! command -v make &> /dev/null
     then
@@ -87,6 +101,7 @@ main() {
     setup_kubectl
     setup_helm
     setup_cilium
+    setup_hubblecli
 }
 
 main
