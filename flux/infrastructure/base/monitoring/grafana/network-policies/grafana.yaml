@@ -15,9 +15,9 @@ specs:
           - ports:
               - port: "9090"
                 protocol: TCP
-    - toEntities:
-        - world
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
+      - toEntities:
+          - world
+        toPorts:
+          - ports:
+              - port: "443"
+                protocol: TCP
