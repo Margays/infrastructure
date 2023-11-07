@@ -65,30 +65,68 @@ DATA = {
 
 class NetworkPolicyRuleSelector:
     def __init__(self, data: dict) -> None:
-        self._selector_type = self._get_selector_type(data)
-        self._match_labels = self._get_labels(data)
+        self._suffix = "Selector"
+        self._selector_type = self._get_selector_type(data["labels"])
+        self._match_labels = self._get_labels(data["labels"])
 
-    def _get_selector_type(self, data: dict) -> str:
-        if "reserved:host" in data.get("labels"):
-            return "nodeSelector"
-        elif "namespace" in data:
-            return "endpointSelector"
+    def _get_selector_type(self, labels: List[str]) -> str:
+        if "reserved:host" in labels:
+            return "node"
+        elif "namespace" in labels:
+            return "endpoint"
         else:
             raise Exception("unknown selector type")
 
-    def _get_labels(self, data: dict) -> dict:
-        labels = {}
-        if self._selector_type == "endpointSelector":
-            for label in data["labels"]:
+    def _get_labels(self, labels: List[str]) -> dict:
+        selected_labels = {}
+        if self._selector_type == "endpoint":
+            for label in labels:
                 if label.startswith("k8s:"):
                     key, value = label.split(":", 1)[1].split("=", 1)
-                    labels[key] = value
+                    selected_labels[key] = value
 
-        return labels
+        return selected_labels
 
     def to_dict(self) -> dict:
         return {
-            self._selector_type: {
+            f"{self._selector_type}{self._suffix}": {
+                "matchLabels": self._match_labels,
+            },
+        }
+
+
+class NetworkPolicyIngressRule:
+    def __init__(self, data: dict) -> None:
+        source = data["source"]
+        self._prefix = "from"
+        self._rule_type = self._get_rule_type(source)
+        self._match_labels = self._get_labels(source["labels"])
+
+    def _get_rule_type(self, data: dict) -> str:
+        if "reserved:host" in data.get("labels", []):
+            return f"Entities"
+        elif "namespace" in data:
+            return f"Endpoints"
+        else:
+            raise Exception("unknown selector type")
+
+    def _get_labels(self, labels: List[str]) -> dict:
+        selected_labels = {}
+        if self._rule_type == "Endpoints":
+            for label in labels:
+                if label.startswith("k8s:"):
+                    key, value = label.split(":", 1)[1].split("=", 1)
+                    selected_labels[key] = value
+        elif self._rule_type == "Entities":
+            raise NotImplementedError()
+        else:
+            raise Exception("unknown selector type")
+
+        return selected_labels
+
+    def to_dict(self) -> dict:
+        return {
+            f"{self._prefix}{self._rule_type}": {
                 "matchLabels": self._match_labels,
             },
         }
@@ -108,16 +146,16 @@ class NetworkPolicyRule:
         self._egress.append(data)
 
     def add_ingress(self, data: dict) -> None:
-        return
-        self._ingress.append(data)
+        rule = NetworkPolicyIngressRule(data)
+        self._ingress.append(rule)
 
     def to_dict(self) -> dict:
         if self._selector is None:
             raise Exception("selector is not set")
 
         rule = {
-            "egress": self._egress,
-            "ingress": self._ingress,
+            "egress": [egress.to_dict() for egress in self._egress],
+            "ingress": [ingress.to_dict() for ingress in self._ingress],
         }
         rule.update(self._selector.to_dict())
         return rule
@@ -134,10 +172,10 @@ class NetworkPolicy:
         traffic_direction = data["flow"]["traffic_direction"]
         if traffic_direction == "EGRESS":
             rule.set_selector(data["flow"]["source"])
-            rule.add_egress(data)
+            rule.add_egress(data["flow"])
         else:
             rule.set_selector(data["flow"]["destination"])
-            rule.add_ingress(data)
+            rule.add_ingress(data["flow"])
 
         self._rules.append(rule)
 
