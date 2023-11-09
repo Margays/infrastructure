@@ -1,6 +1,9 @@
 import subprocess
 import json
 from typing import List, Iterator
+from network_policy_manager.network_policy.rule import NetworkPolicyRule
+from network_policy_manager.network_policy import NetworkPolicy
+import json
 
 DATA = {
     "flow": {
@@ -63,146 +66,31 @@ DATA = {
 }
 
 
-class NetworkPolicyRuleSelector:
-    def __init__(self, data: dict) -> None:
-        self._suffix = "Selector"
-        self._selector_type = self._get_selector_type(data["labels"])
-        self._match_labels = self._get_labels(data["labels"])
+class NetworkPolicyManager:
+    def __init__(self):
+        self._rules: List[NetworkPolicyRule] = []
+        self._network_policies: List[NetworkPolicy] = []
 
-    def _get_selector_type(self, labels: List[str]) -> str:
-        if "reserved:host" in labels:
-            return "node"
-        elif "namespace" in labels:
-            return "endpoint"
-        else:
-            raise Exception("unknown selector type")
-
-    def _get_labels(self, labels: List[str]) -> dict:
-        selected_labels = {}
-        if self._selector_type == "endpoint":
-            for label in labels:
-                if label.startswith("k8s:"):
-                    key, value = label.split(":", 1)[1].split("=", 1)
-                    selected_labels[key] = value
-
-        return selected_labels
-
-    def to_dict(self) -> dict:
-        return {
-            f"{self._selector_type}{self._suffix}": {
-                "matchLabels": self._match_labels,
-            },
-        }
-
-
-class NetworkPolicyIngressRule:
-    def __init__(self, data: dict) -> None:
-        source = data["source"]
-        self._prefix = "from"
-        self._rule_type = self._get_rule_type(source)
-        self._match_labels = self._get_labels(source["labels"])
-
-    def _get_rule_type(self, data: dict) -> str:
-        if "reserved:host" in data.get("labels", []):
-            return f"Entities"
-        elif "namespace" in data:
-            return f"Endpoints"
-        else:
-            raise Exception("unknown selector type")
-
-    def _get_labels(self, labels: List[str]) -> dict:
-        selected_labels = {}
-        if self._rule_type == "Endpoints":
-            for label in labels:
-                if label.startswith("k8s:"):
-                    key, value = label.split(":", 1)[1].split("=", 1)
-                    selected_labels[key] = value
-        elif self._rule_type == "Entities":
-            raise NotImplementedError()
-        else:
-            raise Exception("unknown selector type")
-
-        return selected_labels
-
-    def to_dict(self) -> dict:
-        return {
-            f"{self._prefix}{self._rule_type}": {
-                "matchLabels": self._match_labels,
-            },
-        }
-
-
-class NetworkPolicyRule:
-    def __init__(self) -> None:
-        self._selector = None
-        self._egress = []
-        self._ingress = []
-
-    def set_selector(self, data: dict) -> None:
-        self._selector = NetworkPolicyRuleSelector(data)
-
-    def add_egress(self, data: dict) -> None:
-        return
-        self._egress.append(data)
-
-    def add_ingress(self, data: dict) -> None:
-        rule = NetworkPolicyIngressRule(data)
-        self._ingress.append(rule)
-
-    def to_dict(self) -> dict:
-        if self._selector is None:
-            raise Exception("selector is not set")
-
-        rule = {
-            "egress": [egress.to_dict() for egress in self._egress],
-            "ingress": [ingress.to_dict() for ingress in self._ingress],
-        }
-        rule.update(self._selector.to_dict())
-        return rule
-
-
-class NetworkPolicy:
-    def __init__(self) -> None:
-        self.name = ""
-        self.namespace = ""
-        self._rules: List[NetworkPolicyRule] = []  
-
-    def add_rule(self, data: dict) -> None:
+    def parse_flow(self, data: dict) -> None:
         rule = NetworkPolicyRule()
-        traffic_direction = data["flow"]["traffic_direction"]
+        try:
+            traffic_direction = data["flow"]["traffic_direction"]
+        except Exception:
+            print("SKIPPED")
+            return
+
         if traffic_direction == "EGRESS":
             rule.set_selector(data["flow"]["source"])
             rule.add_egress(data["flow"])
         else:
             rule.set_selector(data["flow"]["destination"])
             rule.add_ingress(data["flow"])
-
+        
         self._rules.append(rule)
 
-    def to_dict(self) -> dict:
-        return {
-            "apiVersion": "cilium.io/v2",
-            "kind": "CiliumNetworkPolicy",
-            "metadata": {
-                "name": self.name,
-                "namespace": self.namespace,
-            },
-            "specs": [rule.to_dict() for rule in self._rules],
-        }
-
-
-class NetworkPolicyManager:
-    def __init__(self):
-        self._network_policies: List[NetworkPolicy] = []
-
-    def parse_flow(self, data: dict) -> None:
-        network_policy = NetworkPolicy()
-        network_policy.add_rule(data)
-        self._network_policies.append(network_policy)
-
     def to_dict(self) -> Iterator[dict]:
-        for network_policy in self._network_policies:
-            yield network_policy.to_dict() 
+        for rule in self._rules:
+            yield rule.to_dict() 
 
 
 def executeCmd(cmd):
@@ -217,9 +105,14 @@ def executeCmd(cmd):
 
 
 def main() -> None:
+    with open("../kube-system.json", "r") as stream:
+        data = json.load(stream)
+
     manager = NetworkPolicyManager()
-    manager.parse_flow(DATA)
-    print(list(manager.to_dict()))
+    for flow in data:
+        manager.parse_flow(flow)
+
+    print(json.dumps(list(manager.to_dict())))
     return
     for json_data in executeCmd(["hubble", "observe", "--follow", "--output", "json"]):
         data = json.loads(json_data)
