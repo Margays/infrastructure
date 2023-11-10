@@ -3,7 +3,7 @@ import json
 from typing import List, Iterator
 from network_policy_manager.network_policy.rule import NetworkPolicyRule
 from network_policy_manager.network_policy import NetworkPolicy
-import json
+
 
 DATA = {
     "flow": {
