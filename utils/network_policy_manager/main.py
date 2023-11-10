@@ -5,6 +5,7 @@ sys.path.append(file_dir)
 
 import subprocess
 import json
+from pathlib import Path
 from typing import List, Iterator
 from network_policy_manager.network_policy.rule import NetworkPolicyRule
 from network_policy_manager.network_policy import NetworkPolicy
@@ -34,7 +35,7 @@ class NetworkPolicyManager:
 
     def to_dict(self) -> Iterator[dict]:
         for rule in self._rules:
-            yield rule.to_dict() 
+            yield rule.to_dict()
 
 
 def executeCmd(cmd):
@@ -49,15 +50,18 @@ def executeCmd(cmd):
 
 
 def main() -> None:
-    with open("../kube-system.json", "r") as stream:
+    with open(Path(__file__).parent.parent.parent.joinpath("kube-system.json"), "r") as stream:
         data = json.load(stream)
 
     manager = NetworkPolicyManager()
     for flow in data:
         manager.parse_flow(flow)
 
-    print(json.dumps(list(manager.to_dict())))
+    for item in manager.to_dict():
+        print(json.dumps(item))
+
     return
+
     for json_data in executeCmd(["hubble", "observe", "--follow", "--output", "json"]):
         data = json.loads(json_data)
         print(data)
