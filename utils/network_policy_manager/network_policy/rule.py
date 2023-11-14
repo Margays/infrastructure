@@ -13,10 +13,16 @@ class NetworkPolicyRule:
 
     def add_egress(self, data: dict) -> None:
         rule = EgressRule(data)
+        if rule in self._egress:
+            return
+
         self._egress.append(rule)
 
     def add_ingress(self, data: dict) -> None:
         rule = IngressRule(data)
+        if rule in self._ingress:
+            return
+
         self._ingress.append(rule)
 
     def to_dict(self) -> dict:
@@ -34,8 +40,14 @@ class NetworkPolicyRule:
         if self._selector != obj._selector:
             raise Exception("selector is not equal")
 
-        self._egress.extend(obj._egress)
-        self._ingress.extend(obj._ingress)
+        for egress in obj._egress:
+            if egress not in self._egress:
+                self._egress.append(egress)
+
+        for ingress in obj._ingress:
+            if ingress not in self._ingress:
+                self._ingress.append(ingress)
+
         return self
 
     def identity(self) -> int:

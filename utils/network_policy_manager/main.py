@@ -13,7 +13,7 @@ from network_policy_manager.network_policy import NetworkPolicy
 
 class NetworkPolicyManager:
     def __init__(self):
-        self._rules: List[NetworkPolicyRule] = []
+        self._rules: Dict[int, NetworkPolicyRule] = {}
         self._network_policies: List[NetworkPolicy] = []
 
     def parse_flow(self, data: dict) -> None:
@@ -21,7 +21,14 @@ class NetworkPolicyManager:
         try:
             traffic_direction = data["flow"]["traffic_direction"]
         except Exception:
-            print("SKIPPED")
+            if data["flow"]["sock_xlate_point"] in [
+                    "SOCK_XLATE_POINT_POST_DIRECTION_FWD",
+                    "SOCK_XLATE_POINT_PRE_DIRECTION_REV",
+                    "SOCK_XLATE_POINT_POST_DIRECTION_REV",
+                    "SOCK_XLATE_POINT_PRE_DIRECTION_FWD",
+                ]:
+                return
+            print(data)
             return
 
         if traffic_direction == "EGRESS":
@@ -31,10 +38,13 @@ class NetworkPolicyManager:
             rule.set_selector(data["flow"]["destination"])
             rule.add_ingress(data["flow"])
         
-        self._rules.append(rule)
+        if rule.identity() in self._rules:
+            self._rules[rule.identity()] += rule
+        else:
+            self._rules[rule.identity()] = rule
 
     def to_dict(self) -> Iterator[dict]:
-        for rule in self._rules:
+        for _, rule in self._rules.items():
             yield rule.to_dict()
 
 
@@ -50,7 +60,7 @@ def executeCmd(cmd):
 
 
 def main() -> None:
-    with open(Path(__file__).parent.parent.parent.joinpath("kube-system.json"), "r") as stream:
+    with open(Path(__file__).parent.parent.parent.joinpath("all.json"), "r") as stream:
         data = json.load(stream)
 
     manager = NetworkPolicyManager()
@@ -64,8 +74,7 @@ def main() -> None:
 
     for json_data in executeCmd(["hubble", "observe", "--follow", "--output", "json"]):
         data = json.loads(json_data)
-        print(data)
-
+        manager.parse_flow(data)
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,5 @@
 #!/bin/bash
-CILIUM_VERSION="1.14.3"
+CILIUM_VERSION="1.14.4"
 
 PRELOADED_DOCKER_IMAGES=(
     "quay.io/cilium/cilium:v${CILIUM_VERSION}"

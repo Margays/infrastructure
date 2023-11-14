@@ -36,3 +36,9 @@ class SubjectSelector:
                 "matchLabels": self._match_labels,
             },
         }
+
+    def __eq__(self, obj: "SubjectSelector") -> bool:
+        return self._selector_type == obj._selector_type and self._match_labels == obj._match_labels
+
+    def __hash__(self) -> int:
+        return hash(f"{self._selector_type}{self._match_labels}")
