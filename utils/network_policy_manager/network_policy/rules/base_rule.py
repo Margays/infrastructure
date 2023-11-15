@@ -1,56 +1,46 @@
+from network_policy_manager.network_policy.exceptions import UnknownRuleTypeError
+from network_policy_manager.network_policy.rules.types import BaseType, EndpointRule, EntityRule
+
+
 class BaseRule:
-    def __init__(self, data: dict, prefix: str, source_name: str) -> None:
-        source = data[source_name]
+    def __init__(self, data: dict, prefix: str, target: str) -> None:
+        source = data[target]
+        self._ports = self._get_ports(data.get("l4", {}), target)
         self._prefix = prefix
         self._rule_type = self._get_rule_type(source)
-        self._match_labels = self._get_labels(source["labels"])
 
-    def _get_rule_type(self, data: dict) -> str:
-        entities = [
-            "reserved:host",
-            "reserved:remote-node",
-            "reserved:world",
-        ]
-        if any(label in data.get("labels", []) for label in entities):
-            return f"Entities"
-        elif "namespace" in data:
-            return f"Endpoints"
+    def _get_rule_type(self, data: dict) -> BaseType:
+        if "namespace" in data:
+            return EndpointRule(data)
         else:
-            raise Exception("unknown selector type")
+            return EntityRule(data)
 
-    def _get_labels(self, labels: list[str]) -> dict:
-        allowed_labels = [
-            "app",
-            "io.cilium.k8s.policy.serviceaccount",
-            "io.kubernetes.pod.namespace",
-        ]
-        if self._rule_type == "Endpoints":
-            selected_labels = {}
-            for label in labels:
-                if label.startswith("k8s:"):
-                    key, value = label.split(":", 1)[1].split("=", 1)
-                    if key not in allowed_labels:
-                        continue
-                    selected_labels[key] = value
-            return selected_labels
-        elif self._rule_type == "Entities":
-            selected_labels = []
-            for label in labels:
-                if label.startswith("reserved:"):
-                    name = label.split(":", 1)[1]
-                    selected_labels.append(name)
-            return selected_labels
-        
-        raise Exception("unknown selector type")
+    def _get_ports(self, l4_data: dict, target: str) -> list:
+        ports = []
+        for key, value in l4_data.items():
+            port = value.get(f"{target}_port", None)
+            if port is None:
+                continue
+
+            ports.append({
+                "port": port,
+                "protocol": key
+            })
+
+        return ports
 
     def to_dict(self) -> dict:
-        return {
-            f"{self._prefix}{self._rule_type}": {
-                "matchLabels": self._match_labels,
-            },
+        rule = {
+            f"{self._prefix}{self._rule_type.get_type()}": self._rule_type.to_dict(),
         }
+        if self._ports:
+            rule[f"{self._prefix}Ports"] = {
+                "ports": self._ports
+            }
+
+        return rule
 
     def __eq__(self, obj: "BaseRule") -> bool:
         return (self._rule_type == obj._rule_type 
             and self._prefix == obj._prefix
-            and self._match_labels == obj._match_labels)
+            and self._rule_type == obj._rule_type)

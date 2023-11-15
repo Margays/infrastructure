@@ -1,3 +1,6 @@
+from .exceptions import UnknownSelectorError
+
+
 class SubjectSelector:
     def __init__(self, data: dict) -> None:
         self._suffix = "Selector"
@@ -5,13 +8,17 @@ class SubjectSelector:
         self._match_labels = self._get_labels(data["labels"])
 
     def _get_selector_type(self, data: dict) -> str:
-        if any(label in data.get("labels", []) for label in ["reserved:host", "reserved:remote-node"]):
+        entities = [
+            "reserved:host",
+            "reserved:remote-node",
+            "reserved:world",
+        ]
+        if any(label in data.get("labels", []) for label in entities):
             return "node"
         elif "namespace" in data:
             return "endpoint"
         else:
-            print(data)
-            raise Exception("unknown selector type")
+            raise UnknownSelectorError("Data: {data}")
 
     def _get_labels(self, labels: list[str]) -> dict:
         allowed_labels = [

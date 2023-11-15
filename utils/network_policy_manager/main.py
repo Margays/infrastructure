@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import List, Iterator
 from network_policy_manager.network_policy.rule import NetworkPolicyRule
 from network_policy_manager.network_policy import NetworkPolicy
+from network_policy_manager.network_policy.exceptions import UnknownSelectorError, UnknownRuleTypeError
 
 
 class NetworkPolicyManager:
@@ -17,11 +18,15 @@ class NetworkPolicyManager:
         self._network_policies: List[NetworkPolicy] = []
 
     def parse_flow(self, data: dict) -> None:
+        flow = data["flow"]
+        if flow["verdict"] == "TRACED?":
+            return
+
         rule = NetworkPolicyRule()
         try:
-            traffic_direction = data["flow"]["traffic_direction"]
+            traffic_direction = flow["traffic_direction"]
         except Exception:
-            if data["flow"]["sock_xlate_point"] in [
+            if flow["sock_xlate_point"] in [
                     "SOCK_XLATE_POINT_POST_DIRECTION_FWD",
                     "SOCK_XLATE_POINT_PRE_DIRECTION_REV",
                     "SOCK_XLATE_POINT_POST_DIRECTION_REV",
@@ -31,12 +36,15 @@ class NetworkPolicyManager:
             print(data)
             return
 
-        if traffic_direction == "EGRESS":
-            rule.set_selector(data["flow"]["source"])
-            rule.add_egress(data["flow"])
-        else:
-            rule.set_selector(data["flow"]["destination"])
-            rule.add_ingress(data["flow"])
+        try:
+            if traffic_direction == "EGRESS":
+                rule.set_selector(flow["source"])
+                rule.add_egress(flow)
+            else:
+                rule.set_selector(flow["destination"])
+                rule.add_ingress(flow)
+        except (UnknownSelectorError, UnknownRuleTypeError):
+            return
         
         if rule.identity() in self._rules:
             self._rules[rule.identity()] += rule
@@ -60,8 +68,10 @@ def executeCmd(cmd):
 
 
 def main() -> None:
+    data = []
     with open(Path(__file__).parent.parent.parent.joinpath("all.json"), "r") as stream:
-        data = json.load(stream)
+        for line in stream:
+            data.append(json.loads(line))
 
     manager = NetworkPolicyManager()
     for flow in data:
