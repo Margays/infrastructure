@@ -9,7 +9,7 @@ resources:
   - ../base/storage/nfs
 
 patches:
-  - path: patches/patch.yaml
+  - path: patches/cilium.yaml
     target:
       group: helm.toolkit.fluxcd.io
       version: v2beta1

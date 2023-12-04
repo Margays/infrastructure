@@ -6,3 +6,5 @@ collections
 
 # VSCode
 .vscode
+
+__pycache__
