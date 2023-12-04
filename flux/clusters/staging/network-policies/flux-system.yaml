@@ -35,7 +35,6 @@ specs:
       matchLabels:
         io.cilium.k8s.policy.serviceaccount: source-controller
     ingress:
-    # kubelet -> core dns probes
     - fromEntities:
       - host
       toPorts:
@@ -54,6 +53,14 @@ specs:
       - ports:
         - port: '9440'
           protocol: TCP
+    egress:
+    - toEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: notification-controller
+      toPorts:
+      - ports:
+        - port: '9090'
+          protocol: TCP
   - endpointSelector:
       matchLabels:
         io.cilium.k8s.policy.serviceaccount: notification-controller
@@ -63,6 +70,13 @@ specs:
       toPorts:
       - ports:
         - port: '9440'
+          protocol: TCP
+    - fromEndpoints:
+      - matchLabels:
+          io.cilium.k8s.policy.serviceaccount: kustomize-controller
+      toPorts:
+      - ports:
+        - port: '9090'
           protocol: TCP
   - endpointSelector:
       matchLabels:
