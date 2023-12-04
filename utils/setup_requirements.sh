@@ -1,3 +1,5 @@
+#!/bin/bash
+
 setup_helm() {
     if ! command -v helm &> /dev/null
     then

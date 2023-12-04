@@ -19,7 +19,7 @@ spec:
       #   auth_enabled: true
       # ingress:
       #   enabled: false
-      # gateway: 
+      # gateway:
       #   enabled: true
       #   basicAuth:
       #     enabled: false
