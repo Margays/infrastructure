@@ -1,5 +1,5 @@
 # Patch LoadBalancer IP
 - op: add
   path: /spec/values
-  value: 
+  value:
     k8sServiceHost: '192.168.1.101'

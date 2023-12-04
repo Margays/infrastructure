@@ -45,7 +45,7 @@ class NetworkPolicyManager:
                 rule.add_ingress(flow)
         except (UnknownSelectorError, UnknownRuleTypeError):
             return
-        
+
         if rule.identity() in self._rules:
             self._rules[rule.identity()] += rule
         else:

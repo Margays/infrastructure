@@ -1,4 +1,4 @@
-- op: replace #action 
+- op: replace #action
   path: /specs/0/egress/0 #resouirce we want to change
   value:
     toEntities:

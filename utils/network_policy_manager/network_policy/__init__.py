@@ -2,7 +2,7 @@ class NetworkPolicy:
     def __init__(self) -> None:
         self.name = ""
         self.namespace = ""
-        self._rules: List[NetworkPolicyRule] = []  
+        self._rules: List[NetworkPolicyRule] = []
 
     def add_rule(self, data: dict) -> None:
         rule = NetworkPolicyRule()

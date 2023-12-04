@@ -52,6 +52,6 @@ class BaseRule:
         return rule
 
     def __eq__(self, obj: "BaseRule") -> bool:
-        return (self._rule_type == obj._rule_type 
+        return (self._rule_type == obj._rule_type
             and self._prefix == obj._prefix
             and self._rule_type == obj._rule_type)
