@@ -27,6 +27,7 @@ build-nodes:
 k8s-requirements:
 	test -d $(KUBESPRAY_INVENTORY_DIR)/.venv || python3.11 -m virtualenv $(KUBESPRAY_INVENTORY_DIR)/.venv
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
+	git submodule update --init --recursive
 	pip install -r $(KUBESPRAY_DIR)/requirements.txt
 
 .PHONY: build-kubernetes
@@ -77,4 +78,4 @@ flux: check-env-variables
 bootstrap-kind: check-env-variables setup-requirements build-kind flux
 
 .PHONY: bootstrap
-bootstrap: build-nodes build-kubernetes flux
+bootstrap: check-env-variables build-nodes build-kubernetes flux

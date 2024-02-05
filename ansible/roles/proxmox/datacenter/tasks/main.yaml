@@ -1,0 +1,13 @@
+- name: Concatenate the public keys
+  set_fact:
+    proxmox_datacenter_user_allow_list:
+      "{{ proxmox_datacenter_tags | map(attribute='name') | list | join(';') }}"
+    proxmox_datacenter_color_map: |-
+      {% for tag in proxmox_datacenter_tags %}
+      {{ tag.name }}:{{ tag.bgcolor }}:{{ tag.color }}{% if not loop.last %};{% endif %}
+      {% endfor %}
+
+- name: Update datacenter configuration
+  ansible.builtin.template:
+      src: templates/datacenter.cfg.j2
+      dest: /etc/pve/datacenter.cfg

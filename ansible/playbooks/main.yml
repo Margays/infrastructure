@@ -1,10 +1,17 @@
 ---
-- name: Setup nodes
-  hosts: all
+- name: Configure proxmox
+  hosts: proxmox
   become: true
   roles:
-  - shutdown  # only when 'shutdown' tag provided
-  - upgrade  # only when 'system_upgrade' tag provided
-  - users
-  - packages
-  - tools
+  - proxmox/apt
+  - proxmox/datacenter
+
+# - name: Setup nodes
+#   hosts: kubernetes
+#   become: true
+#   roles:
+#   - shutdown  # only when 'shutdown' tag provided
+#   - upgrade  # only when 'system_upgrade' tag provided
+#   - users
+#   - packages
+#   - tools
