@@ -1,0 +1,12 @@
+proxmox_datacenter_description: "Proxmox Andromeda Datacenter"
+proxmox_datacenter_tags:
+  - name: kubernetes
+    bgcolor: '000000'
+    color: 'FFFFFF'
+  - name: home-assistant
+    bgcolor: '0000ff'
+    color: 'FFFFFF'
+  - name: workstation
+    bgcolor: 'ff0000'
+    color: 'FFFFFF'
+proxmox_datacenter_tags_shape: full

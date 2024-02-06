@@ -1,4 +1,4 @@
-- name: Concatenate the public keys
+- name: Create datacenter tags
   set_fact:
     proxmox_datacenter_user_allow_list:
       "{{ proxmox_datacenter_tags | map(attribute='name') | list | join(';') }}"
@@ -7,7 +7,28 @@
       {{ tag.name }}:{{ tag.bgcolor }}:{{ tag.color }}{% if not loop.last %};{% endif %}
       {% endfor %}
 
-- name: Update datacenter configuration
-  ansible.builtin.template:
-      src: templates/datacenter.cfg.j2
-      dest: /etc/pve/datacenter.cfg
+- name: Get clutser/options state
+  run_once: true
+  ansible.builtin.command: >
+    pvesh get cluster/options --output-format=json
+  register: proxmox_datacenter_options
+
+- name: Set description
+  run_once: true
+  ansible.builtin.command: >
+    pvesh set cluster/options -description='{{ proxmox_datacenter_description }}'
+  when: proxmox_datacenter_options.stdout | from_json | json_query('description') | trim != proxmox_datacenter_description
+
+- name: debug
+  debug:
+    msg: "{{ proxmox_datacenter_options.stdout | from_json | json_query('\"user-tag-access\"') }}"
+
+- name: Set User Tag Access
+  run_once: true
+  ansible.builtin.command: >
+    pvesh set cluster/options -user-tag-access='user-allow=list,user-allow-list={{ proxmox_datacenter_user_allow_list }}'
+
+- name: Set User Tag Color Map
+  run_once: true
+  ansible.builtin.command: >
+    pvesh set cluster/options -tag-style='color-map={{ proxmox_datacenter_color_map }},shape={{ proxmox_datacenter_tags_shape }}'

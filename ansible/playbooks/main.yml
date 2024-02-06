@@ -5,13 +5,14 @@
   roles:
   - proxmox/apt
   - proxmox/datacenter
+  - proxmox/subscription_popup
 
-# - name: Setup nodes
-#   hosts: kubernetes
-#   become: true
-#   roles:
-#   - shutdown  # only when 'shutdown' tag provided
-#   - upgrade  # only when 'system_upgrade' tag provided
-#   - users
-#   - packages
-#   - tools
+- name: Setup nodes
+  hosts: kubernetes
+  become: true
+  roles:
+  - shutdown  # only when 'shutdown' tag provided
+  - upgrade  # only when 'system_upgrade' tag provided
+  - users
+  - packages
+  - tools
