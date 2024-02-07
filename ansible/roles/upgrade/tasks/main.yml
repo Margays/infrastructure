@@ -1,5 +1,8 @@
 - name: Upgrade all apt packages
-  apt: upgrade=dist force_apt_get=yes
+  ansible.builtin.apt:
+    upgrade: dist
+    update_cache: true
+    cache_valid_time: 86400
   tags:
     - system_upgrade
     - never
