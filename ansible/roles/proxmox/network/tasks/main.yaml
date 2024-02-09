@@ -1,0 +1,13 @@
+- name: Install vlan package
+  apt:
+    name: openvswitch-switch
+    state: present
+    update_cache: true
+  tags: network
+
+- name: Configure network interfaces
+  ansible.builtin.template:
+    src: etc/network/interfaces.j2
+    dest: /etc/network/interfaces
+  notify: Restart networking.service
+  tags: network

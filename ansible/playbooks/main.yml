@@ -3,9 +3,10 @@
   hosts: proxmox
   become: true
   roles:
-  - proxmox/apt
-  - proxmox/datacenter
-  - proxmox/subscription_popup
+  # - proxmox/apt
+  # - proxmox/datacenter
+  # - proxmox/subscription_popup
+  - proxmox/network
 
 # - name: Setup nodes
 #   hosts: kubernetes
