@@ -12,24 +12,33 @@
 auto lo
 iface lo inet loopback
 
-auto enp2s0
-iface enp2s0 inet manual
+# Interfaces
+{% for interface in proxmox_network_interfaces %}
+auto {{ interface.name }}
+iface {{ interface.name }} inet manual
 
-auto enp1s0
-iface enp1s0 inet manual
+{% endfor %}
 
-auto bond0
-iface bond0 inet manual
-        ovs_bonds enp1s0 enp2s0
+# Bonds
+{% for bond in proxmox_network_bonds %}
+auto {{ bond.name }}
+iface {{ bond.name }} inet manual
+        ovs_bonds {{ bond.slaves | join(" ") }}
         ovs_type OVSBond
         ovs_bridge vmbr0
         ovs_options bond_mode=active-backup
 
-auto vmbr0
-iface vmbr0 inet static
-        address {{ ansible_host }}/24
-        gateway 192.168.1.1
+{% endfor %}
+
+# Bridges
+{% for bridge in proxmox_network_bridges %}
+auto {{ bridge.name }}
+iface {{ bridge.name }} inet static
+        address {{ bridge.address }}/{{ bridge.netmask }}
+        gateway {{ bridge.gateway }}
         ovs_type OVSBridge
-        ovs_ports bond0
+        ovs_ports {{ bridge.bridge_ports | join(" ") }}
+
+{% endfor %}
 
 source /etc/network/interfaces.d/*

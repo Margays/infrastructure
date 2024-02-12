@@ -1,0 +1,3 @@
+proxmox_network_interfaces: []
+proxmox_network_bonds: []
+proxmox_network_bridges: []

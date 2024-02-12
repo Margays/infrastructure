@@ -1,3 +1,4 @@
+# Datacenter configuration
 proxmox_datacenter_description: "Proxmox Andromeda Datacenter"
 proxmox_datacenter_tags:
   - name: kubernetes
@@ -10,3 +11,53 @@ proxmox_datacenter_tags:
     bgcolor: 'ff0000'
     color: 'FFFFFF'
 proxmox_datacenter_tags_shape: full
+
+# Network configuration
+proxmox_network_interfaces:
+  - name: enp1s0
+  - name: enp2s0
+proxmox_network_bonds:
+  - name: bond0
+    slaves:
+      - enp1s0
+      - enp2s0
+    options:
+      bond_mode: active-backup
+proxmox_network_bridges:
+  - name: vmbr0
+    address: "{{ ansible_host }}"
+    gateway: 192.168.1.1
+    netmask: 24
+    bridge_ports:
+      - bond0
+
+# Storage configuration
+proxmox_storage:
+  local:
+    type: dir
+    path: /var/lib/vz
+    content:
+      - backup
+      - iso
+      - vztmpl
+  lvmthin:
+    type: lvmthin
+    thinpool: data
+    vgname: pve
+    content:
+      - images
+      - rootdir
+  synology:
+    type: nfs
+    export: /volume2/nfs/proxmox
+    server: 192.168.1.2
+    path: /mnt/pve/synology
+    prune_backups:
+      keep-all: 1
+    content:
+      - images
+      - snippets
+      - rootdir
+      - iso
+      - vztmpl
+      - backup

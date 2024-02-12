@@ -9,5 +9,6 @@
   ansible.builtin.template:
     src: etc/network/interfaces.j2
     dest: /etc/network/interfaces
+  when: proxmox_network_interfaces | length > 0
   notify: Restart networking.service
   tags: network

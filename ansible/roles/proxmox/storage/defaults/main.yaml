@@ -1,0 +1,15 @@
+proxmox_storage:
+  local:
+    type: dir
+    path: /var/lib/vz
+    content:
+      - backup
+      - iso
+      - vztmpl
+  lvmthin:
+    type: lvmthin
+    thinpool: data
+    vgname: pve
+    content:
+      - images
+      - rootdir
