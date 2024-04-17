@@ -1,0 +1,20 @@
+---
+- name: Download cilium-cli tar
+  ansible.builtin.get_url:
+    url: "{{ kubernetes_tools_ciliumcli_url }}"
+    dest: "{{ kubernetes_tools_ciliumcli_tar_path }}"
+    mode: '0o755'
+    
+- name: Unarchive cilium-cli tar
+  ansible.builtin.unarchive:
+    src: "{{ kubernetes_tools_ciliumcli_tar_path }}"
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Remove cilium-cli tar installation script
+  file: 
+    path: "{{ kubernetes_tools_ciliumcli_tar_path }}"
+    state: absent
+
+- name: Check cilium-cli version
+  shell: cilium version

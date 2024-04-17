@@ -1,5 +1,5 @@
 ANSIBLE_USER ?= margay
-ENVIRONMENT ?= staging
+ENVIRONMENT ?= kind
 PREINSTALL_REQUIREMENTS ?= false
 
 MKFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -13,43 +13,71 @@ BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 .ONESHELL:
 
-.PHONY: build-nodes
-build-nodes:
+.PHONY: ansible-requirements
+ansible-requirements:
 	test -d $(ANSIBLE_INVENTORY_DIR)/.venv || python3 -m virtualenv $(ANSIBLE_INVENTORY_DIR)/.venv
+	. $(ANSIBLE_INVENTORY_DIR)/.venv/bin/activate
+	pip install -r $(ANSIBLE_DIR)/requirements.txt
+	mkdir -p $(ANSIBLE_DIR)/collections
+	ansible-galaxy collection install -r $(ANSIBLE_DIR)/requirements.yml -p $(ANSIBLE_DIR)/collections
+
+## --------------- ##
+#     Proxmox
+## --------------- ##
+
+.PHONY: provision-proxmox
+provision-proxmox: ansible-requirements
 	cd $(ANSIBLE_DIR)
 	. $(ANSIBLE_INVENTORY_DIR)/.venv/bin/activate
-	pip install -r requirements.txt
-	mkdir -p collections
-	ansible-galaxy collection install -r requirements.yml -p collections
-	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/main.yml -u $(ANSIBLE_USER) -K
+	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/proxmox/provision.yml -u $(ANSIBLE_USER) -K
 
-.PHONY: k8s-requirements
-k8s-requirements:
+.PHONY: build-nodes
+build-nodes: ansible-requirements
+	cd $(ANSIBLE_DIR)
+	. $(ANSIBLE_INVENTORY_DIR)/.venv/bin/activate
+	ansible-galaxy collection install -r requirements.yml -p collections
+	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/k8s_nodes/provision.yml -u $(ANSIBLE_USER) -K
+
+## --------------- ##
+#       Kind
+## --------------- ##
+
+.PHONY: build-kind
+build-kind: ansible-requirements
+	cd $(ANSIBLE_DIR)
+	. $(ANSIBLE_INVENTORY_DIR)/.venv/bin/activate
+	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/kind/cluster.yaml -u $(ANSIBLE_USER) -K
+
+.PHONY: delete-kind
+delete-kind:
+	kind delete cluster --name kind
+
+## --------------- ##
+#     Kubespray
+## --------------- ##
+.PHONY: kubespray-requirements
+kubespray-requirements:
 	test -d $(KUBESPRAY_INVENTORY_DIR)/.venv || python3.11 -m virtualenv $(KUBESPRAY_INVENTORY_DIR)/.venv
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	git submodule update --init --recursive
 	pip install -r $(KUBESPRAY_DIR)/requirements.txt
 
 .PHONY: build-kubernetes
-build-kubernetes: k8s-requirements
+build-kubernetes: kubespray-requirements
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	cd $(KUBESPRAY_DIR)
 	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K cluster.yml
+	bash $(KUBESPRAY_INVENTORY_DIR)/artifacts/kubectl.sh $(KUBESPRAY_INVENTORY_DIR)/artifacts/admin.conf
 
 .PHONY: delete-kubernetes
-delete-kubernetes: k8s-requirements
+delete-kubernetes: kubespray-requirements
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	cd $(KUBESPRAY_DIR)
 	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K reset.yml
 
-.PHONY: build-kind
-build-kind:
-	kind create cluster --name kind --config=$(KIND_CONFIG)
-	bash $(KIND_DIR)/setup.sh
-
-.PHONY: delete-kind
-delete-kind:
-	kind delete cluster --name kind
+## --------------- ##
+#     FluxCD
+## --------------- ##
 
 .PHONY: check-env-variables
 check-env-variables:
@@ -57,25 +85,18 @@ ifndef GITHUB_SSH_PRIVATE_KEY
 	$(error GITHUB_SSH_PRIVATE_KEY is undefined)
 endif
 
-.PHONY: setup-requirements
-setup-requirements:
-ifeq ($(PREINSTALL_REQUIREMENTS),true)
-	bash $(MKFILE_DIR)/utils/setup_requirements.sh
-endif
-
 .PHONY: flux
-flux: check-env-variables
-	flux bootstrap git \
-      --url=ssh://git@github.com/OpenSourceMargays/infrastructure.git \
-      --private-key-file=$(GITHUB_SSH_PRIVATE_KEY) \
-	  --branch=$(BRANCH) \
-      --path=flux/clusters/$(ENVIRONMENT) \
-	  --network-policy=false \
-	  --silent
-	kubectl apply -k flux/clusters/$(ENVIRONMENT)
+flux: ansible-requirements
+	cd $(ANSIBLE_DIR)
+	. $(ANSIBLE_INVENTORY_DIR)/.venv/bin/activate
+	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/kuberentes/post_cluster_setup.yml -u $(ANSIBLE_USER) -K
+
+## --------------- ##
+#       E2E
+## --------------- ##
 
 .PHONY: bootstrap-kind
-bootstrap-kind: check-env-variables setup-requirements build-kind flux
+bootstrap-kind: check-env-variables build-kind flux
 
 .PHONY: bootstrap
 bootstrap: check-env-variables build-nodes build-kubernetes flux

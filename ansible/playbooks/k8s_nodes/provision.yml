@@ -1,14 +1,4 @@
 ---
-- name: Configure proxmox
-  hosts: proxmox
-  become: true
-  roles:
-  - proxmox/apt
-  - proxmox/datacenter
-  - proxmox/subscription_popup
-  - proxmox/network
-  - proxmox/storage
-
 - name: Setup nodes
   hosts: kubernetes
   become: true

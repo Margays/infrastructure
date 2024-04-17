@@ -1,0 +1,2 @@
+kubernetes_kind_setup_dst: /usr/local/bin/kind
+kubernetes_kind_setup_version: v0.20.0

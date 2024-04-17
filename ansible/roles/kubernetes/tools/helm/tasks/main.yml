@@ -1,0 +1,17 @@
+---
+- name: Download helm
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    dest: "{{ kubernetes_tools_helm_install_script_path }}"
+    mode: '0o700'
+
+- name: Install helm
+  shell: "{{ kubernetes_tools_helm_install_script_path }}"
+
+- name: Remove helm installation script
+  file: 
+    path: "{{ kubernetes_tools_helm_install_script_path }}"
+    state: absent
+
+- name: Check helm version
+  shell: helm version

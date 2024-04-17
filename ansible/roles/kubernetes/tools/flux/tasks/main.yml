@@ -1,0 +1,17 @@
+---
+- name: Download FluxCD
+  ansible.builtin.get_url:
+    url: https://fluxcd.io/install.sh
+    dest: "{{ kubernetes_tools_flux_install_script_path }}"
+    mode: '0o700'
+
+- name: Install FluxCD
+  shell: "{{ kubernetes_tools_flux_install_script_path }}"
+
+- name: Remove FluxCD installation script
+  file: 
+    path: "{{ kubernetes_tools_flux_install_script_path }}"
+    state: absent
+
+- name: Check FluxCD version
+  shell: flux --version

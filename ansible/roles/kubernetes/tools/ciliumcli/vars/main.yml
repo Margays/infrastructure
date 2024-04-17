@@ -1,0 +1,2 @@
+kubernetes_tools_ciliumcli_url: "https://github.com/cilium/cilium-cli/releases/download/{{ kubernetes_tools_ciliumcli_version }}/cilium-linux-{{ kubernetes_tools_ciliumcli_arch }}.tar.gz"
+kubernetes_tools_ciliumcli_checksum_url: "{{ kubernetes_tools_ciliumcli_url }}.sha256"

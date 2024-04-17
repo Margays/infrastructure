@@ -1,0 +1,14 @@
+---
+- name: Bootstrap FluxCD
+  shell: |
+    flux bootstrap git 
+      --url="{{ kubernetes_deployments_flux_url }}"
+      --private-key-file="{{ kubernetes_deployments_flux_github_ssh_private_key_path }}"
+      --branch="{{ kubernetes_deployments_flux_branch }}"
+      --path="flux/clusters/{{ kubernetes_deployments_flux_environment_name }}"
+      --network-policy=false
+      --silent
+
+- name: Apply FluxCD env specific manifests
+  shell: |
+    kubectl apply -k "flux/clusters/{{ kubernetes_deployments_flux_environment_name }}"

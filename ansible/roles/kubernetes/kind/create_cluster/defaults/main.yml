@@ -1,0 +1,3 @@
+kubernetes_kind_cluster_name: "margays-kind"
+kubernetes_kind_config_dir: "/etc/kind/{{ kubernetes_kind_cluster_name }}"
+kubernetes_kind_config_path: "{{ kubernetes_kind_config_dir }}/kind-config.yaml"

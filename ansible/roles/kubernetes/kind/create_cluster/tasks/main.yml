@@ -1,0 +1,18 @@
+---
+- name: Create directory for Kind configuration file
+  file:
+    path: "{{ kubernetes_kind_config_dir }}"
+    state: directory
+
+- name: Copy Kind configuration file
+  copy:
+    src: "{{ item }}"
+    dest: "{{ kubernetes_kind_config_path }}"
+  with_items:
+    - "files/kind-config.yaml"
+
+- name: Create Kind cluster
+  shell: kind create cluster --name={{ kubernetes_kind_cluster_name }} --config={{ kubernetes_kind_config_path }}
+
+- name: Check Kind cluster nodes
+  shell: kind get nodes

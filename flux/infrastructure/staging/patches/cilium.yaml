@@ -1,0 +1,5 @@
+# Patch LoadBalancer IP
+- op: add
+  path: /spec/values
+  value:
+    k8sServiceHost: 'kind-control-plane'

@@ -1,0 +1,7 @@
+---
+- name: Setup Kind cluster
+  hosts: kube_control_plane[0]
+  become: true
+  roles:
+    - kubernetes/kind/setup
+    - kubernetes/kind/create_cluster
