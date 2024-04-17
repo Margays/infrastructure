@@ -9,7 +9,7 @@
     chart_ref: cilium/cilium
     chart_version: 1.15.3
     release_namespace: kube-system
-    values: "{{ lookup('ansible.builtin.file', 'values.yaml') | from_yaml }}"
+    values: "{{ lookup('ansible.builtin.file', 'values.yaml') | from_yaml | combine( { 'k8sServiceHost': kubernetes_deployments_cilium_kube_api_server_ip } ) }}"
 
 - name: Wait for cilium pods to be ready
   shell: cilium status --wait

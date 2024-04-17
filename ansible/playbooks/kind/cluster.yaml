@@ -1,7 +1,12 @@
 ---
-- name: Setup Kind cluster
+- name: Prepare node
   hosts: kube_control_plane[0]
   become: true
   roles:
+    - kubernetes/tools/kubectl
     - kubernetes/kind/setup
+
+- name: Setup Kind cluster
+  hosts: kube_control_plane[0]
+  roles:
     - kubernetes/kind/create_cluster

@@ -3,8 +3,12 @@
   hosts: kube_control_plane[0]
   become: true
   roles:
-    # - kubernetes/tools/helm
-    # - kubernetes/tools/flux
-    # - kubernetes/tools/ciliumcli
+    - kubernetes/tools/helm
+    - kubernetes/tools/flux
+    - kubernetes/tools/ciliumcli
+
+- name: Configure Kubernetes
+  hosts: kube_control_plane[0]
+  roles:
     - kubernetes/deployments/cilium
     # - kubernetes/deployments/flux

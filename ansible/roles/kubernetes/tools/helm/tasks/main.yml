@@ -1,12 +1,19 @@
 ---
+- name: Check if helm is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/flux
+  register: helm_installed
+
 - name: Download helm
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
     dest: "{{ kubernetes_tools_helm_install_script_path }}"
     mode: '0o700'
+  when: not helm_installed.stat.exists
 
 - name: Install helm
   shell: "{{ kubernetes_tools_helm_install_script_path }}"
+  when: not helm_installed.stat.exists
 
 - name: Remove helm installation script
   file: 

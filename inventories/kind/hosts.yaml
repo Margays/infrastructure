@@ -20,3 +20,6 @@ all:
             kube_node:
         calico_rr:
           hosts: {}
+  vars:
+    kubernetes_kind_cluster_name: "margays-kind"
+    kubernetes_deployments_cilium_kube_api_server_ip: "margays-kind-control-plane"

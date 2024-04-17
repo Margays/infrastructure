@@ -1,14 +1,11 @@
 ANSIBLE_USER ?= margay
 ENVIRONMENT ?= kind
-PREINSTALL_REQUIREMENTS ?= false
 
 MKFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 ANSIBLE_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/ansible
 KUBESPRAY_INVENTORY_DIR := $(MKFILE_DIR)/inventories/$(ENVIRONMENT)/kubespray
 ANSIBLE_DIR := $(MKFILE_DIR)/ansible
 KUBESPRAY_DIR := $(MKFILE_DIR)/kubespray
-KIND_DIR := $(MKFILE_DIR)/utils/kind
-KIND_CONFIG := $(KIND_DIR)/kind-config.yaml
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 .ONESHELL:
@@ -50,7 +47,7 @@ build-kind: ansible-requirements
 
 .PHONY: delete-kind
 delete-kind:
-	kind delete cluster --name kind
+	kind delete cluster --name margays-kind
 
 ## --------------- ##
 #     Kubespray
