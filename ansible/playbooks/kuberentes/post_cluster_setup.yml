@@ -12,3 +12,6 @@
   roles:
     - kubernetes/deployments/cilium
     # - kubernetes/deployments/flux
+  vars:
+    environment_name: "kind"
+    branch_name: "main"

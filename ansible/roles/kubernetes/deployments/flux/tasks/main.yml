@@ -9,6 +9,6 @@
       --network-policy=false
       --silent
 
-- name: Apply FluxCD env specific manifests
-  shell: |
-    kubectl apply -k "flux/clusters/{{ kubernetes_deployments_flux_environment_name }}"
+# - name: Apply FluxCD env specific manifests
+#   shell: |
+#     kubectl apply -k "flux/clusters/{{ kubernetes_deployments_flux_environment_name }}"

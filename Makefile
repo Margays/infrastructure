@@ -64,7 +64,6 @@ build-kubernetes: kubespray-requirements
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	cd $(KUBESPRAY_DIR)
 	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K cluster.yml
-	bash $(KUBESPRAY_INVENTORY_DIR)/artifacts/kubectl.sh $(KUBESPRAY_INVENTORY_DIR)/artifacts/admin.conf
 
 .PHONY: delete-kubernetes
 delete-kubernetes: kubespray-requirements
@@ -86,7 +85,8 @@ endif
 flux: ansible-requirements
 	cd $(ANSIBLE_DIR)
 	. $(ANSIBLE_INVENTORY_DIR)/.venv/bin/activate
-	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/kuberentes/post_cluster_setup.yml -u $(ANSIBLE_USER) -K
+	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/kuberentes/post_cluster_setup.yml \
+		-u $(ANSIBLE_USER) -K --extra-vars="environment_name=$(ENVIRONMENT)" --extra-vars="branch_name=$(BRANCH)"
 
 ## --------------- ##
 #       E2E
