@@ -75,12 +75,6 @@ delete-kubernetes: kubespray-requirements
 #     FluxCD
 ## --------------- ##
 
-.PHONY: check-env-variables
-check-env-variables:
-ifndef GITHUB_SSH_PRIVATE_KEY
-	$(error GITHUB_SSH_PRIVATE_KEY is undefined)
-endif
-
 .PHONY: flux
 flux: ansible-requirements
 	cd $(ANSIBLE_DIR)
@@ -93,7 +87,7 @@ flux: ansible-requirements
 ## --------------- ##
 
 .PHONY: bootstrap-kind
-bootstrap-kind: check-env-variables build-kind flux
+bootstrap-kind: build-kind flux
 
 .PHONY: bootstrap
-bootstrap: check-env-variables build-nodes build-kubernetes flux
+bootstrap: build-nodes build-kubernetes flux

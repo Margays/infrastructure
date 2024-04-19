@@ -11,7 +11,7 @@
   hosts: kube_control_plane[0]
   roles:
     - kubernetes/deployments/cilium
-    # - kubernetes/deployments/flux
+    - kubernetes/deployments/flux
   vars:
     environment_name: "kind"
     branch_name: "main"
