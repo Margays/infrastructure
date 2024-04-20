@@ -1,0 +1,25 @@
+all:
+  hosts:
+    kind:
+      ansible_host: 127.0.0.1
+  children:
+    kubernetes:
+      children:
+        kube_control_plane:
+          hosts:
+            kind:
+        kube_node:
+          hosts:
+            kind:
+        etcd:
+          hosts:
+            kind:
+        k8s_cluster:
+          children:
+            kube_control_plane:
+            kube_node:
+        calico_rr:
+          hosts: {}
+  vars:
+    kubernetes_kind_cluster_name: "margays-kind"
+    kubernetes_deployments_cilium_kube_api_server_ip: "margays-kind-control-plane"

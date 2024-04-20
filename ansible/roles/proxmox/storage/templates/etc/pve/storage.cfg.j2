@@ -1,0 +1,10 @@
+{% for name, value in storages.items() %}
+{{ value.type }}: {{ name }}
+        path {{ value.path }}
+        content {{ value.content | join(',') }}
+        {% if value.server is defined %} server {{ value.server }} {% endif %}
+        {% if value.export is defined %} export {{ value.export }} {% endif %}
+        {% if value.vgname is defined %} vgname {{ value.vgname }} {% endif %}
+        {% if value.thinpool is defined %} thinpool {{ value.thinpool }} {% endif %}
+        {% if value.prune_backups is defined %} prune-backups {{ value.prune_backups | map_to_key_value }} {% endif %}
+{% endfor %}

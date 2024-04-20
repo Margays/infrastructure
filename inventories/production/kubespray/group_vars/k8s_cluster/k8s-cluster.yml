@@ -17,7 +17,7 @@ kube_token_dir: "{{ kube_config_dir }}/tokens"
 kube_api_anonymous_auth: true
 
 ## Change this to use another Kubernetes version, e.g. a current beta release
-kube_version: v1.26.1
+kube_version: v1.28.5
 
 # Where the binaries will be downloaded.
 # Note: ensure that you've enough disk space (about 1G)
@@ -255,11 +255,11 @@ podsecuritypolicy_enabled: false
 # podsecuritypolicy_privileged_spec: {}
 
 # Make a copy of kubeconfig on the host that runs Ansible in {{ inventory_dir }}/artifacts
-# kubeconfig_localhost: false
+kubeconfig_localhost: true
 # Use ansible_host as external api ip when copying over kubeconfig.
-# kubeconfig_localhost_ansible_host: false
+kubeconfig_localhost_ansible_host: true
 # Download kubectl onto the host that runs Ansible in {{ bin_dir }}
-# kubectl_localhost: false
+kubectl_localhost: true
 
 # A comma separated list of levels of node allocatable enforcement to be enforced by kubelet.
 # Acceptable options are 'pods', 'system-reserved', 'kube-reserved' and ''. Default is "".

@@ -1,0 +1,4 @@
+kubernetes_deployments_flux_url: ssh://git@github.com/OpenSourceMargays/infrastructure.git
+kubernetes_deployments_flux_branch: "{{ branch_name }}"
+kubernetes_deployments_flux_github_ssh_private_key_path: "{{ inventory_dir }}/flux_ssh_key"
+kubernetes_deployments_flux_environment_name: "{{ environment_name }}"

@@ -9,6 +9,12 @@ resources:
   - ../base/storage/nfs
 
 patches:
+  - path: patches/cilium.yaml
+    target:
+      group: helm.toolkit.fluxcd.io
+      version: v2beta1
+      kind: HelmRelease
+      name: cilium
   - path: patches/core-dns-network-policy.yaml
     target:
       group: cilium.io

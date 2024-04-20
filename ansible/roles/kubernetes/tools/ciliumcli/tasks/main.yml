@@ -1,0 +1,27 @@
+---
+- name: Check if cilium-cli is already installed
+  ansible.builtin.stat:
+    path: "/usr/local/bin/cilium"
+  register: ciliumcli_installed
+
+- name: Download cilium-cli tar
+  ansible.builtin.get_url:
+    url: "{{ kubernetes_tools_ciliumcli_url }}"
+    dest: "{{ kubernetes_tools_ciliumcli_tar_path }}"
+    mode: '0o755'
+  when: not ciliumcli_installed.stat.exists
+
+- name: Unarchive cilium-cli tar
+  ansible.builtin.unarchive:
+    src: "{{ kubernetes_tools_ciliumcli_tar_path }}"
+    dest: /usr/local/bin
+    remote_src: yes
+  when: not ciliumcli_installed.stat.exists
+
+- name: Remove cilium-cli tar installation script
+  ansible.builtin.file:
+    path: "{{ kubernetes_tools_ciliumcli_tar_path }}"
+    state: absent
+
+- name: Check cilium-cli version
+  ansible.builtin.shell: cilium version

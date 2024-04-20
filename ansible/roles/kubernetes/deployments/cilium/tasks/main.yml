@@ -1,0 +1,15 @@
+- name: Add cilium chart repo
+  kubernetes.core.helm_repository:
+    name: cilium
+    repo_url: "https://helm.cilium.io"
+
+- name: Deploy Cilium chart using values files on target
+  kubernetes.core.helm:
+    name: cilium
+    chart_ref: cilium/cilium
+    chart_version: 1.15.3
+    release_namespace: kube-system
+    values: "{{ lookup('ansible.builtin.file', 'values.yaml') | from_yaml | combine( { 'k8sServiceHost': kubernetes_deployments_cilium_kube_api_server_ip } ) }}"
+
+- name: Wait for cilium pods to be ready
+  ansible.builtin.shell: cilium status --wait

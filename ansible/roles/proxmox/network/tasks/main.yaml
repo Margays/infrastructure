@@ -1,0 +1,14 @@
+- name: Install vlan package
+  ansible.builtin.apt:
+    name: openvswitch-switch
+    state: present
+    update_cache: true
+  tags: network
+
+- name: Configure network interfaces
+  ansible.builtin.template:
+    src: etc/network/interfaces.j2
+    dest: /etc/network/interfaces
+  when: proxmox_network_interfaces | length > 0
+  notify: Restart networking.service
+  tags: network

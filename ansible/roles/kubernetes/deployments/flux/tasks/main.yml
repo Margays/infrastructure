@@ -1,0 +1,21 @@
+---
+- name: Copy flux ssh key
+  ansible.builtin.copy:
+    src: "{{ kubernetes_deployments_flux_github_ssh_private_key_path }}"
+    dest: "{{ ansible_env.HOME }}/key"
+    mode: '0o700'
+
+- name: Bootstrap FluxCD
+  ansible.builtin.shell: |
+    flux bootstrap git  \
+      --url="{{ kubernetes_deployments_flux_url }}" \
+      --private-key-file=""{{ ansible_env.HOME }}/key"" \
+      --branch="{{ kubernetes_deployments_flux_branch }}" \
+      --path="flux/clusters/{{ kubernetes_deployments_flux_environment_name }}" \
+      --network-policy=false \
+      --silent
+
+- name: Delete flux ssh key
+  ansible.builtin.file:
+    state: absent
+    path: "{{ ansible_env.HOME }}/key"

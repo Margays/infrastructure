@@ -1,0 +1,15 @@
+---
+- name: Check if kubectl is already installed
+  ansible.builtin.stat:
+    path: "{{ kubernetes_tools_kubectl_setup_dst }}"
+  register: kubectl_installed
+
+- name: Install kubectl
+  ansible.builtin.get_url:
+    url: "https://dl.k8s.io/release/{{ kubernetes_tools_kubectl_version }}/bin/linux/amd64/kubectl"
+    dest: "{{ kubernetes_tools_kubectl_setup_dst }}"
+    mode: '0o755'
+  when: not kubectl_installed.stat.exists
+
+- name: Check kubectl version
+  ansible.builtin.shell: kubectl version --client

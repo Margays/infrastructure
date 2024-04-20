@@ -1,0 +1,1 @@
+kubernetes_deployments_cilium_kube_api_server_ip: "{{ ansible_default_ipv4.address }}"

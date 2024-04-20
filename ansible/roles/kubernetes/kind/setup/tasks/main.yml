@@ -1,0 +1,9 @@
+---
+- name: Install kind
+  ansible.builtin.get_url:
+    url: "https://kind.sigs.k8s.io/dl/{{ kubernetes_kind_setup_version }}/kind-linux-amd64"
+    dest: "{{ kubernetes_kind_setup_dst }}"
+    mode: '0o755'
+
+- name: Check kind version
+  ansible.builtin.shell: kind version

@@ -1,0 +1,4 @@
+kubernetes_tools_ciliumcli_tar_path: /tmp/cilium.tar.gz
+kubernetes_tools_ciliumcli_checksum_path: /tmp/cilium.tar.gz.sha256
+kubernetes_tools_ciliumcli_arch: amd64
+kubernetes_tools_ciliumcli_version: v0.16.4

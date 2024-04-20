@@ -1,6 +1,6 @@
 ---
 - name: Setup nodes
-  hosts: all
+  hosts: kubernetes
   become: true
   roles:
   - shutdown  # only when 'shutdown' tag provided

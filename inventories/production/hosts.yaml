@@ -1,36 +1,43 @@
 all:
   hosts:
-    odroid01:
+    proxmox01:
       ansible_host: 192.168.1.101
-      ip: 192.168.1.101
-      access_ip: 192.168.1.101
-    odroid02:
+    proxmox02:
       ansible_host: 192.168.1.102
-      ip: 192.168.1.102
-      access_ip: 192.168.1.102
-    odroid03:
+    proxmox03:
       ansible_host: 192.168.1.103
-      ip: 192.168.1.103
-      access_ip: 192.168.1.103
+    k8s01:
+      ansible_host: 192.168.1.155
+    k8s02:
+      ansible_host: 192.168.1.60
+    k8s03:
+      ansible_host: 192.168.1.229
   children:
-    kube_control_plane:
+    proxmox:
       hosts:
-        odroid01:
-        odroid02:
-        odroid03:
-    kube_node:
-      hosts:
-        odroid01:
-        odroid02:
-        odroid03:
-    etcd:
-      hosts:
-        odroid01:
-        odroid02:
-        odroid03:
-    k8s_cluster:
+        proxmox01:
+        proxmox02:
+        proxmox03:
+    kubernetes:
       children:
         kube_control_plane:
+          hosts:
+            k8s01:
+            k8s02:
+            k8s03:
         kube_node:
-    calico_rr:
-      hosts: {}
+          hosts:
+            k8s01:
+            k8s02:
+            k8s03:
+        etcd:
+          hosts:
+            k8s01:
+            k8s02:
+            k8s03:
+        k8s_cluster:
+          children:
+            kube_control_plane:
+            kube_node:
+        calico_rr:
+          hosts: {}

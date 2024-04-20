@@ -1,0 +1,24 @@
+---
+- name: Check if flux is already installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/flux
+  register: flux_installed
+
+- name: Download FluxCD
+  ansible.builtin.get_url:
+    url: https://fluxcd.io/install.sh
+    dest: "{{ kubernetes_tools_flux_install_script_path }}"
+    mode: '0o700'
+  when: not flux_installed.stat.exists
+
+- name: Install FluxCD
+  ansible.builtin.shell: "{{ kubernetes_tools_flux_install_script_path }}"
+  when: not flux_installed.stat.exists
+
+- name: Remove FluxCD installation script
+  ansible.builtin.file:
+    path: "{{ kubernetes_tools_flux_install_script_path }}"
+    state: absent
+
+- name: Check FluxCD version
+  ansible.builtin.shell: flux --version
