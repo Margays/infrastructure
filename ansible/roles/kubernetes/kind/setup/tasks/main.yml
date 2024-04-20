@@ -7,4 +7,3 @@
 
 - name: Check kind version
   shell: kind version
-

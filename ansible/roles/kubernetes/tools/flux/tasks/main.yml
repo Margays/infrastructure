@@ -16,7 +16,7 @@
   when: not flux_installed.stat.exists
 
 - name: Remove FluxCD installation script
-  file: 
+  file:
     path: "{{ kubernetes_tools_flux_install_script_path }}"
     state: absent
 

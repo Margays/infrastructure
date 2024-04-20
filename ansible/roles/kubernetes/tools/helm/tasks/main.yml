@@ -16,7 +16,7 @@
   when: not helm_installed.stat.exists
 
 - name: Remove helm installation script
-  file: 
+  file:
     path: "{{ kubernetes_tools_helm_install_script_path }}"
     state: absent
 
