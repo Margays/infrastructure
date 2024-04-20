@@ -63,13 +63,13 @@ kubespray-requirements:
 build-kubernetes: kubespray-requirements
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	cd $(KUBESPRAY_DIR)
-	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K cluster.yml
+	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K playbooks/cluster.yml
 
 .PHONY: delete-kubernetes
 delete-kubernetes: kubespray-requirements
 	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
 	cd $(KUBESPRAY_DIR)
-	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K reset.yml
+	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K playbooks/reset.yml
 
 ## --------------- ##
 #     FluxCD

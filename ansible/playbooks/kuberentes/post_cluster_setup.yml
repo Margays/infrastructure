@@ -1,5 +1,16 @@
 ---
 - name: Configure Kubernetes
+  hosts: k8s_cluster
+  become: true
+  tasks:
+    - name: Fix permissions on /opt/cni/bin
+      ansible.builtin.file:
+        path: /opt/cni/bin
+        owner: root
+        group: root
+        mode: '0o755'
+
+- name: Configure Kubernetes
   hosts: kube_control_plane[0]
   become: true
   roles:
@@ -9,6 +20,7 @@
 
 - name: Configure Kubernetes
   hosts: kube_control_plane[0]
+  become: true
   roles:
     - kubernetes/deployments/cilium
     - kubernetes/deployments/flux
