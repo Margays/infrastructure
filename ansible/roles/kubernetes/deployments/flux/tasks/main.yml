@@ -6,7 +6,7 @@
     mode: '0o700'
 
 - name: Bootstrap FluxCD
-  shell: |
+  ansible.builtin.shell: |
     flux bootstrap git  \
       --url="{{ kubernetes_deployments_flux_url }}" \
       --private-key-file=""{{ ansible_env.HOME }}/key"" \

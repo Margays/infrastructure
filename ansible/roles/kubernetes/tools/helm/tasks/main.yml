@@ -12,13 +12,13 @@
   when: not helm_installed.stat.exists
 
 - name: Install helm
-  shell: "{{ kubernetes_tools_helm_install_script_path }}"
+  ansible.builtin.shell: "{{ kubernetes_tools_helm_install_script_path }}"
   when: not helm_installed.stat.exists
 
 - name: Remove helm installation script
-  file:
+  ansible.builtin.file:
     path: "{{ kubernetes_tools_helm_install_script_path }}"
     state: absent
 
 - name: Check helm version
-  shell: helm version
+  ansible.builtin.shell: helm version

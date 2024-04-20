@@ -12,4 +12,4 @@
   when: not kubectl_installed.stat.exists
 
 - name: Check kubectl version
-  shell: kubectl version --client
+  ansible.builtin.shell: kubectl version --client

@@ -1,5 +1,5 @@
 - name: Install vlan package
-  apt:
+  ansible.builtin.apt:
     name: openvswitch-switch
     state: present
     update_cache: true

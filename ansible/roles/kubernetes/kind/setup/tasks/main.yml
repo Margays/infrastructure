@@ -6,4 +6,4 @@
     mode: '0o755'
 
 - name: Check kind version
-  shell: kind version
+  ansible.builtin.shell: kind version

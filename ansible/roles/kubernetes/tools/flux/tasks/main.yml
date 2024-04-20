@@ -12,13 +12,13 @@
   when: not flux_installed.stat.exists
 
 - name: Install FluxCD
-  shell: "{{ kubernetes_tools_flux_install_script_path }}"
+  ansible.builtin.shell: "{{ kubernetes_tools_flux_install_script_path }}"
   when: not flux_installed.stat.exists
 
 - name: Remove FluxCD installation script
-  file:
+  ansible.builtin.file:
     path: "{{ kubernetes_tools_flux_install_script_path }}"
     state: absent
 
 - name: Check FluxCD version
-  shell: flux --version
+  ansible.builtin.shell: flux --version

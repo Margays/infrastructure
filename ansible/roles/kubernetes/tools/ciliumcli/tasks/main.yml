@@ -19,9 +19,9 @@
   when: not ciliumcli_installed.stat.exists
 
 - name: Remove cilium-cli tar installation script
-  file:
+  ansible.builtin.file:
     path: "{{ kubernetes_tools_ciliumcli_tar_path }}"
     state: absent
 
 - name: Check cilium-cli version
-  shell: cilium version
+  ansible.builtin.shell: cilium version
