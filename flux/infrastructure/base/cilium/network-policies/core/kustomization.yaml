@@ -5,4 +5,4 @@ resources:
   - core-dns.yaml
   - etcd.yaml
   - kubelet.yaml
-  - local-path-provisioner.yaml
+  # - local-path-provisioner.yaml
