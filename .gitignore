@@ -6,5 +6,10 @@ collections
 
 # VSCode
 .vscode
-
 __pycache__
+
+# Other
+flux_ssh_key
+admin.conf
+inventories/*/kubespray/artifacts/
+inventories/*/kubespray/credentials/
