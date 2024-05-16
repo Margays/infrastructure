@@ -8,6 +8,12 @@ collections
 .vscode
 __pycache__
 
+# Terrafrom
+.terraform
+*.tfvars
+*.tfstate*
+.terraform.lock.hcl
+
 # Other
 flux_ssh_key
 admin.conf
