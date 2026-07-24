@@ -40,47 +40,22 @@ build-nodes: ansible-requirements
 ## --------------- ##
 
 .PHONY: build-kind
-build-kind: ansible-requirements
-	cd $(ANSIBLE_DIR)
-	. $(ANSIBLE_INVENTORY_DIR)/.venv/bin/activate
-	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/kind/cluster.yaml -u $(ANSIBLE_USER) -K
+build-kind:
+	kind create cluster --name margays-kind
 
 .PHONY: delete-kind
 delete-kind:
 	kind delete cluster --name margays-kind
 
 ## --------------- ##
-#     Kubespray
-## --------------- ##
-.PHONY: kubespray-requirements
-kubespray-requirements:
-	test -d $(KUBESPRAY_INVENTORY_DIR)/.venv || python3.11 -m virtualenv $(KUBESPRAY_INVENTORY_DIR)/.venv
-	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
-	git submodule update --init --recursive
-	pip install -r $(KUBESPRAY_DIR)/requirements.txt
-
-.PHONY: build-kubernetes
-build-kubernetes: kubespray-requirements
-	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
-	cd $(KUBESPRAY_DIR)
-	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K playbooks/cluster.yml
-
-.PHONY: delete-kubernetes
-delete-kubernetes: kubespray-requirements
-	. $(KUBESPRAY_INVENTORY_DIR)/.venv/bin/activate
-	cd $(KUBESPRAY_DIR)
-	ansible-playbook -i $(KUBESPRAY_INVENTORY_DIR)/hosts.yaml -u $(ANSIBLE_USER) --become --become-user=root -K playbooks/reset.yml
-
-## --------------- ##
 #     FluxCD
 ## --------------- ##
 
 .PHONY: flux
-flux: ansible-requirements
-	cd $(ANSIBLE_DIR)
-	. $(ANSIBLE_INVENTORY_DIR)/.venv/bin/activate
-	ansible-playbook -i $(ANSIBLE_INVENTORY_DIR)/hosts.yaml playbooks/kuberentes/post_cluster_setup.yml \
-		-u $(ANSIBLE_USER) -K --extra-vars="environment_name=$(ENVIRONMENT)" --extra-vars="branch_name=$(BRANCH)"
+flux:
+	helm install flux-operator oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator \
+  		--namespace flux-system \
+	    --create-namespace
 
 ## --------------- ##
 #       E2E
