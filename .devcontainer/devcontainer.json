@@ -1,0 +1,37 @@
+{
+    "name": "Ubuntu",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "build": {
+        "context": "..",
+        "dockerfile": "./Dockerfile",
+        "target": "workspace",
+        "args": {
+            "REMOTE_USER": "${localEnv:USER}",
+            "REMOTE_UID": "${localEnv:REMOTE_UID:1000}",
+            "REMOTE_GID": "${localEnv:REMOTE_GID:1000}"
+        }
+    },
+    "mounts": [],
+    "remoteUser": "${localEnv:USER}",
+    "hostRequirements": {
+        "cpus": 2,
+        "memory": "8gb",
+        "storage": "32gb"
+    },
+    "features": {},
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "GitHub.copilot",
+                "Github.copilot-chat",
+                "openai.chatgpt",
+                "hashicorp.terraform"
+            ],
+            "settings": {
+                "editor.formatOnSave": true,
+                "terminal.integrated.shell.linux": "/usr/bin/bash",
+                "files.insertFinalNewline": true
+            }
+        }
+    }
+}

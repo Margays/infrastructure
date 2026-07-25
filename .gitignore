@@ -10,6 +10,7 @@ __pycache__
 
 # Terrafrom
 .terraform
+*.tfbackend
 *.tfvars
 *.tfstate*
 .terraform.lock.hcl
