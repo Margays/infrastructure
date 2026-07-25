@@ -1,0 +1,109 @@
+terraform {
+  required_providers {
+    proxmox = {
+      source = "bpg/proxmox"
+    }
+    talos = {
+      source = "siderolabs/talos"
+    }
+  }
+}
+
+resource "proxmox_download_file" "talos_iso" {
+  content_type = "iso"
+  datastore_id = "truenas-nfs"
+  node_name    = "minisforum"
+  url          = "https://factory.talos.dev/image/9c1d1b442d73f96dcd04e81463eb20000ab014062d22e1b083e1773336bc1dd5/v1.13.7/nocloud-amd64.iso"
+  file_name    = "talos.iso"
+}
+
+resource "proxmox_virtual_environment_vm" "talos" {
+  name      = "talos01"
+  tags      = ["master", "kuberentes", "talos"]
+  node_name = "odroid01"
+
+  disk {
+    datastore_id = "local-lvm"
+    file_id      = proxmox_download_file.talos_iso.id
+    interface    = "virtio0"
+    iothread     = true
+    discard      = "on"
+    size         = 32
+  }
+
+  cpu {
+    cores = 4
+    type  = "host"
+  }
+
+  memory {
+    dedicated = 8192
+    floating  = 8192 # set equal to dedicated to enable ballooning
+  }
+
+  network_device {
+    bridge      = "vmbr0"
+    mac_address = "BC:24:11:03:81:29"
+    vlan_id     = "104"
+  }
+
+  initialization {
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
+  }
+
+  serial_device {}
+
+  # should be true if qemu agent is not installed / enabled on the VM
+  stop_on_destroy = true
+}
+
+resource "talos_machine_secrets" "this" {}
+
+data "talos_machine_configuration" "this" {
+  cluster_name     = "orion"
+  machine_type     = "controlplane"
+  cluster_endpoint = "https://192.168.4.15:6443"
+  machine_secrets  = talos_machine_secrets.this.machine_secrets
+}
+
+data "talos_client_configuration" "this" {
+  cluster_name         = "orion"
+  client_configuration = talos_machine_secrets.this.client_configuration
+  nodes                = ["192.168.4.15"]
+}
+
+resource "talos_machine_configuration_apply" "this" {
+  client_configuration        = talos_machine_secrets.this.client_configuration
+  machine_configuration_input = data.talos_machine_configuration.this.machine_configuration
+  node                        = "192.168.4.15"
+  config_patches = [
+    yamlencode({
+      machine = {
+        install = {
+          disk = "/dev/vda"
+        }
+      }
+    })
+  ]
+  depends_on = [proxmox_virtual_environment_vm.talos]
+}
+
+resource "talos_machine_bootstrap" "this" {
+  node                 = "192.168.4.15"
+  client_configuration = talos_machine_secrets.this.client_configuration
+  depends_on = [
+    talos_machine_configuration_apply.this
+  ]
+}
+
+data "talos_cluster_kubeconfig" "this" {
+  client_configuration = talos_machine_secrets.this.client_configuration
+  node                 = "192.168.4.15"
+  depends_on = [
+    talos_machine_bootstrap.this
+  ]
+}

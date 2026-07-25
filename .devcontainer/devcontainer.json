@@ -22,7 +22,10 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "GitHub.copilot"
+                "GitHub.copilot",
+                "Github.copilot-chat",
+                "openai.chatgpt",
+                "hashicorp.terraform"
             ],
             "settings": {
                 "editor.formatOnSave": true,
