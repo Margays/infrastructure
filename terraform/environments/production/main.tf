@@ -10,6 +10,10 @@ terraform {
       source  = "siderolabs/talos"
       version = "0.11.0"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "3.2.0"
+    }
   }
 }
 
@@ -20,14 +24,20 @@ provider "proxmox" {
   insecure = var.proxmox_insecure
 }
 
-provider "talos" {
-  # Configuration options
-}
+provider "talos" {}
+
+provider "helm" {}
 
 module "talos" {
   providers = {
     proxmox = proxmox
     talos   = talos
+    helm    = helm
   }
   source = "../../modules/talos"
+}
+
+output "kubeconfig" {
+  value     = module.talos.kubeconfig
+  sensitive = true
 }
