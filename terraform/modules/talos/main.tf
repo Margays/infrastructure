@@ -12,17 +12,33 @@ terraform {
   }
 }
 
+locals {
+  nodes = {
+    for node in var.configuration.spec.nodes : node.name => node
+  }
+  controlplane_nodes = [
+    for node in var.configuration.spec.nodes : node
+    if node.role == "controlplane"
+  ]
+  worker_nodes = [
+    for node in var.configuration.spec.nodes : node
+    if node.role == "worker"
+  ]
+}
+
 resource "proxmox_download_file" "talos_iso" {
   content_type = "iso"
   datastore_id = "truenas-nfs"
   node_name    = "minisforum"
-  url          = "https://factory.talos.dev/image/9c1d1b442d73f96dcd04e81463eb20000ab014062d22e1b083e1773336bc1dd5/v1.13.7/nocloud-amd64.iso"
+  url          = var.configuration.spec.cluster.image
   file_name    = "talos.iso"
 }
 
 resource "proxmox_virtual_environment_vm" "talos" {
-  name      = "talos01"
-  tags      = ["master", "kuberentes", "talos"]
+  for_each = local.nodes
+
+  name      = each.value.name
+  tags      = [each.value.role, "kubernetes", "talos"]
   node_name = "odroid01"
 
   disk {
@@ -31,23 +47,23 @@ resource "proxmox_virtual_environment_vm" "talos" {
     interface    = "virtio0"
     iothread     = true
     discard      = "on"
-    size         = 32
+    size         = each.value.resources.disk
   }
 
   cpu {
-    cores = 4
+    cores = each.value.resources.cpu
     type  = "host"
   }
 
   memory {
-    dedicated = 8192
-    floating  = 8192 # set equal to dedicated to enable ballooning
+    dedicated = each.value.resources.memory
+    floating  = each.value.resources.memory
   }
 
   network_device {
-    bridge      = "vmbr0"
-    mac_address = "BC:24:11:03:81:29"
-    vlan_id     = "104"
+    bridge      = each.value.network.bridge
+    mac_address = each.value.network.mac_address
+    vlan_id     = each.value.network.vlan_id
   }
 
   initialization {
@@ -65,33 +81,40 @@ resource "proxmox_virtual_environment_vm" "talos" {
 }
 
 data "helm_template" "cilium" {
-  namespace    = "kube-system"
-  name         = "cilium"
-  repository   = "https://helm.cilium.io"
-  chart        = "cilium"
-  version      = "1.19.6"
-  kube_version = "1.36.0"
+  namespace    = var.configuration.spec.helm.helm_release.namespace
+  name         = var.configuration.spec.helm.helm_release.name
+  repository   = var.configuration.spec.helm.helm_release.repository
+  chart        = var.configuration.spec.helm.helm_release.chart
+  version      = var.configuration.spec.helm.helm_release.version
+  kube_version = trimprefix(var.configuration.spec.cluster.kubernetes_version, "v")
+
+  values = [yamlencode(var.configuration.spec.helm.helm_release.values)]
 }
 
 resource "talos_machine_secrets" "this" {}
 
 data "talos_machine_configuration" "this" {
-  cluster_name     = "orion"
-  machine_type     = "controlplane"
-  cluster_endpoint = "https://192.168.4.15:6443"
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
+  for_each = local.nodes
+
+  cluster_name       = var.configuration.spec.name
+  machine_type       = each.value.role
+  cluster_endpoint   = var.configuration.spec.cluster.endpoint
+  kubernetes_version = var.configuration.spec.cluster.kubernetes_version
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
 }
 
 data "talos_client_configuration" "this" {
-  cluster_name         = "orion"
+  cluster_name         = var.configuration.spec.name
   client_configuration = talos_machine_secrets.this.client_configuration
-  nodes                = ["192.168.4.15"]
+  nodes                = [for node in var.configuration.spec.nodes : node.network.address]
 }
 
 resource "talos_machine_configuration_apply" "this" {
+  for_each = local.nodes
+
   client_configuration        = talos_machine_secrets.this.client_configuration
-  machine_configuration_input = data.talos_machine_configuration.this.machine_configuration
-  node                        = "192.168.4.15"
+  machine_configuration_input = data.talos_machine_configuration.this[each.key].machine_configuration
+  node                        = each.value.network.address
   config_patches = [
     yamlencode({
       machine = {
@@ -102,6 +125,16 @@ resource "talos_machine_configuration_apply" "this" {
     }),
     yamlencode({
       cluster = {
+        network = {
+          cni = {
+            # Disable the default CNI as we will be using Cilium instead
+            name = var.configuration.spec.cluster.network.cni.name
+          }
+        }
+        proxy = {
+          # Disable kube-proxy, Cilium will replace it too
+          disabled = var.configuration.spec.cluster.network.proxy.disabled
+        }
         inlineManifests = [
           {
             name = "cilium"
@@ -117,23 +150,23 @@ resource "talos_machine_configuration_apply" "this" {
 }
 
 resource "talos_machine_bootstrap" "this" {
-  node                 = "192.168.4.15"
+  node                 = local.controlplane_nodes[0].network.address
   client_configuration = talos_machine_secrets.this.client_configuration
   depends_on = [
     talos_machine_configuration_apply.this
   ]
 }
 
-data "talos_cluster_kubeconfig" "this" {
+resource "talos_cluster_kubeconfig" "this" {
   client_configuration = talos_machine_secrets.this.client_configuration
-  node                 = "192.168.4.15"
+  node                 = local.controlplane_nodes[0].network.address
   depends_on = [
     talos_machine_bootstrap.this
   ]
 }
 
 output "kubeconfig" {
-  value     = data.talos_cluster_kubeconfig.this.kubeconfig_raw
+  value     = talos_cluster_kubeconfig.this.kubeconfig_raw
   sensitive = true
 }
 

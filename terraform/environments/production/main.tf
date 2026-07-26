@@ -34,7 +34,8 @@ module "talos" {
     talos   = talos
     helm    = helm
   }
-  source = "../../modules/talos"
+  source        = "../../modules/talos"
+  configuration = yamldecode(file(var.config_path))
 }
 
 output "kubeconfig" {
