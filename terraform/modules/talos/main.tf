@@ -181,8 +181,13 @@ resource "talos_cluster_kubeconfig" "this" {
 data "talos_cluster_health" "this" {
   client_configuration   = talos_machine_secrets.this.client_configuration
   control_plane_nodes    = [for node in local.controlplane_nodes : node.network.address]
+  worker_nodes           = [for node in local.worker_nodes : node.network.address]
   endpoints              = [local.controlplane_nodes[0].network.address]
-  skip_kubernetes_checks = true
+  skip_kubernetes_checks = false
+
+  timeouts = {
+    read = "5m"
+  }
   depends_on = [
     talos_cluster_kubeconfig.this
   ]
