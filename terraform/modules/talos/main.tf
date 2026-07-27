@@ -178,6 +178,16 @@ resource "talos_cluster_kubeconfig" "this" {
   ]
 }
 
+data "talos_cluster_health" "this" {
+  client_configuration   = talos_machine_secrets.this.client_configuration
+  control_plane_nodes    = [for node in local.controlplane_nodes : node.network.address]
+  endpoints              = [local.controlplane_nodes[0].network.address]
+  skip_kubernetes_checks = true
+  depends_on = [
+    talos_cluster_kubeconfig.this
+  ]
+}
+
 provider "flux" {
   kubernetes = {
     host                   = talos_cluster_kubeconfig.this.kubernetes_client_configuration.host
@@ -195,6 +205,7 @@ provider "flux" {
 }
 
 resource "flux_bootstrap_git" "this" {
+  depends_on = [data.talos_cluster_health.this]
   components_extra = [
     "image-reflector-controller",
     "image-automation-controller"
