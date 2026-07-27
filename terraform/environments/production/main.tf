@@ -38,6 +38,11 @@ module "talos" {
   configuration = yamldecode(file(var.config_path))
 }
 
+resource "local_file" "kubeconfig" {
+  content  = module.talos.kubeconfig
+  filename = "./kubeconfig"
+}
+
 output "kubeconfig" {
   value     = module.talos.kubeconfig
   sensitive = true

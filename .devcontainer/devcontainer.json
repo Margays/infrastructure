@@ -11,7 +11,9 @@
             "REMOTE_GID": "${localEnv:REMOTE_GID:1000}"
         }
     },
-    "mounts": [],
+    "mounts": [
+        "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/${localEnv:USER}/.ssh,readonly"
+    ],
     "remoteUser": "${localEnv:USER}",
     "hostRequirements": {
         "cpus": 2,

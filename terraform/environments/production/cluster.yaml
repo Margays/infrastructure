@@ -23,7 +23,7 @@ spec:
         memory: 8192
         disk: 32
     - name: "talos02"
-      role: controlplane
+      role: worker
       network:
         address: "192.168.4.16"
         bridge: "vmbr0"
@@ -34,7 +34,7 @@ spec:
         memory: 8192
         disk: 32
     - name: "talos03"
-      role: controlplane
+      role: worker
       network:
         address: "192.168.4.17"
         bridge: "vmbr0"
@@ -53,10 +53,34 @@ spec:
       version: 1.19.6
       repository: https://helm.cilium.io
       values:
+        ipam:
+          mode: kubernetes
         kubeProxyReplacement: false
+        securityContext:
+          capabilities:
+            ciliumAgent:
+              - CHOWN
+              - KILL
+              - NET_ADMIN
+              - NET_RAW
+              - IPC_LOCK
+              - SYS_ADMIN
+              - SYS_RESOURCE
+              - DAC_OVERRIDE
+              - FOWNER
+              - SETGID
+              - SETUID
+            cleanCiliumState:
+              - NET_ADMIN
+              - SYS_ADMIN
+              - SYS_RESOURCE
+        cgroup:
+          autoMount:
+            enabled: false
+          hostRoot: /sys/fs/cgroup
   flux:
-    url: "git@github.com:Margays/infrastructure.git"
+    url: "ssh://git@github.com/Margays/infrastructure.git"
     path: "flux/clusters/production"
     username: "git"
-    private_key_file: ""
+    private_key_file: "/home/lukaszwencel/.ssh/id_ed25519"
     patch_file: null

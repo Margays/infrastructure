@@ -41,7 +41,7 @@ variable "configuration" {
         chart      = optional(string)
         version    = optional(string)
         repository = optional(string)
-        values     = optional(map(any))
+        values     = optional(any)
         manifest   = optional(string)
       }))
       flux = object({
