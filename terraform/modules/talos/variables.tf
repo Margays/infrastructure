@@ -33,15 +33,23 @@ variable "configuration" {
           disk   = number
         })
       }))
-      helm = object({
-        helm_release = object({
-          name       = string
-          namespace  = string
-          chart      = string
-          version    = string
-          repository = string
-          values     = map(any)
-        })
+      manifests = list(object({
+        name       = string
+        type       = string
+        phase      = string
+        namespace  = optional(string)
+        chart      = optional(string)
+        version    = optional(string)
+        repository = optional(string)
+        values     = optional(map(any))
+        manifest   = optional(string)
+      }))
+      flux = object({
+        url              = string
+        path             = string
+        username         = string
+        private_key_file = string
+        patch_file       = optional(string)
       })
     })
   })
@@ -74,5 +82,20 @@ variable "configuration" {
   validation {
     condition     = alltrue([for node in var.configuration.spec.nodes : node.network.vlan_id >= 1 && node.network.vlan_id <= 4094])
     error_message = "Each VLAN ID must be between 1 and 4094."
+  }
+
+  validation {
+    condition     = alltrue([for manifest in var.configuration.spec.manifests : contains(["helm", "manifest"], manifest.type)])
+    error_message = "Each manifest type must be helm or manifest."
+  }
+
+  validation {
+    condition     = alltrue([for manifest in var.configuration.spec.manifests : manifest.type != "helm" || (manifest.namespace != null && manifest.chart != null && manifest.version != null && manifest.repository != null && manifest.values != null)])
+    error_message = "Helm manifests must define namespace, chart, version, repository, and values."
+  }
+
+  validation {
+    condition     = alltrue([for manifest in var.configuration.spec.manifests : manifest.type != "manifest" || manifest.manifest != null])
+    error_message = "Manifest entries must define manifest contents."
   }
 }

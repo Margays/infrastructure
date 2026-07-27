@@ -1,4 +1,0 @@
-- op: replace
-  path: /specs/0/egress/0/toCIDR
-  value:
-  - 192.168.1.1/32

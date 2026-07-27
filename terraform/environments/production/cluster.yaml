@@ -44,12 +44,19 @@ spec:
         cpu: 4
         memory: 8192
         disk: 32
-  helm:
-    helm_release:
-      name: cilium
+  manifests:
+    - name: cilium
+      type: helm
+      phase: bootstrap
       namespace: kube-system
       chart: cilium
       version: 1.19.6
       repository: https://helm.cilium.io
       values:
         kubeProxyReplacement: false
+  flux:
+    url: "git@github.com:Margays/infrastructure.git"
+    path: "flux/clusters/production"
+    username: "git"
+    private_key_file: ""
+    patch_file: null

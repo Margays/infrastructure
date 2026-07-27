@@ -8,10 +8,16 @@ ARG REMOTE_UID
 ARG REMOTE_GID
 
 # Tools setup
-RUN apt update && apt install -y wget gnupg software-properties-common \
+RUN apt update && apt install -y wget curl gnupg software-properties-common \
     && wget -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
     && apt update && apt install -y terraform
+
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 \
+    && chmod 700 get_helm.sh \
+    && ./get_helm.sh
+
+RUN curl -s https://fluxcd.io/install.sh | bash
 
 # User setup
 RUN set -eux; \
