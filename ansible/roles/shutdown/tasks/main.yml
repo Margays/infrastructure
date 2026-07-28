@@ -1,6 +1,0 @@
-- name: Shutdown server
-  ansible.builtin.shell:
-    cmd: "shutdown now"
-  tags:
-    - shutdown
-    - never

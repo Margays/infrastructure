@@ -1,5 +1,0 @@
-- name: Restart pveproxy
-  ansible.builtin.service:
-    name: pveproxy
-    state: restarted
-  tags: proxmox_subscription_popup
