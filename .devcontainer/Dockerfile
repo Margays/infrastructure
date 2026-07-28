@@ -19,6 +19,11 @@ RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/s
 
 RUN curl -s https://fluxcd.io/install.sh | bash
 
+RUN arch=$(dpkg --print-architecture) \
+    && curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${arch}/kubectl" \
+    && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl \
+    && rm kubectl
+
 # User setup
 RUN set -eux; \
     if ! getent group "${REMOTE_USER}" >/dev/null; then \
