@@ -2,7 +2,6 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: cert-manager
-  namespace: cert-manager
 spec:
   chart:
     spec:
@@ -10,7 +9,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: jetstack-repository
-        namespace: flux-system
       version: v1.21.0
   values:
     crds:
