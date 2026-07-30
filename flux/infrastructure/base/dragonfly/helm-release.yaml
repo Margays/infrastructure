@@ -1,0 +1,46 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dragonfly
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: dragonfly
+      sourceRef:
+        kind: HelmRepository
+        name: dragonfly-repository
+        namespace: flux-system
+      version: 1.7.6
+  values:
+    scheduler:
+      image:
+        repository: dragonflyoss/scheduler
+        tag: latest
+      metrics:
+        enable: true
+
+    seedClient:
+      image:
+        repository: dragonflyoss/client
+        tag: latest
+      metrics:
+        enable: true
+
+    client:
+      image:
+        repository: dragonflyoss/client
+        tag: latest
+      metrics:
+        enable: true
+      dfinit:
+        enable: true
+        image:
+          repository: dragonflyoss/dfinit
+          tag: latest
+        config:
+          containerRuntime:
+            containerd:
+              configPath: /etc/containerd/config.toml
+              proxyAllRegistries: true
+  interval: 1h
