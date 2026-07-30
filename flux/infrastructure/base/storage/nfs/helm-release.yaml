@@ -15,7 +15,7 @@ spec:
   values:
     nfs:
       server: "192.168.2.3"
-      path: "/volume2/nfs"
+      path: "/mnt/main/lab/clusters/name"
     storageClass:
       defaultClass: true
       onDelete: 'delete'
