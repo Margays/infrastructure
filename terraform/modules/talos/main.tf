@@ -124,7 +124,7 @@ locals {
   # Load config patches from the specified directory.
   # Relative paths are resolved from the root module directory.
   config_patches = local.config_patches_directory != null ? [
-    for file in fileset(local.config_patches_directory, "*.yaml") : file("${local.config_patches_directory}/${file}")
+    for file in fileset(local.config_patches_directory, "*.yaml") : yamlencode(yamldecode(file("${local.config_patches_directory}/${file}")))
   ] : []
 }
 

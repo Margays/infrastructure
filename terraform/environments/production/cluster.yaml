@@ -45,7 +45,7 @@ spec:
         memory: 8192
         disk: 32
   config_patches_directory: "patches"
-  manifests: []
+  manifests:
     - name: cilium
       type: helm
       phase: bootstrap
