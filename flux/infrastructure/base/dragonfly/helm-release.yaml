@@ -34,13 +34,5 @@ spec:
       metrics:
         enable: true
       dfinit:
-        enable: true
-        image:
-          repository: dragonflyoss/dfinit
-          tag: latest
-        config:
-          containerRuntime:
-            containerd:
-              configPath: /etc/containerd/config.toml
-              proxyAllRegistries: true
+        enable: false  # Talos does not support dfinit due to read-only root filesystem, so we disable it to avoid errors
   interval: 1h

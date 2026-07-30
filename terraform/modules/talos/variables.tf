@@ -44,6 +44,7 @@ variable "configuration" {
         values     = optional(any)
         manifest   = optional(string)
       }))
+      config_patches_directory = optional(string)
       flux = object({
         url              = string
         path             = string

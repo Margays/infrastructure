@@ -44,6 +44,7 @@ spec:
         cpu: 4
         memory: 8192
         disk: 32
+  config_patches_directory: "patches"
   manifests:
     - name: cilium
       type: helm
