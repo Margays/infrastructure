@@ -5,4 +5,4 @@ cluster:
       name: none
   proxy:
     # Disable kube-proxy, Cilium will replace it too
-    disabled: false
+    disabled: true

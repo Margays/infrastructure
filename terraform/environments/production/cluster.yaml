@@ -5,11 +5,6 @@ spec:
     kubernetes_version: v1.36.0
     endpoint: "https://192.168.4.15:6443"
     image: "https://factory.talos.dev/image/9c1d1b442d73f96dcd04e81463eb20000ab014062d22e1b083e1773336bc1dd5/v1.13.7/metal-amd64.iso"
-    network:
-      cni:
-        name: "none"
-      proxy:
-        disabled: false
   nodes:
     - name: "talos01"
       role: controlplane
@@ -56,7 +51,10 @@ spec:
       values:
         ipam:
           mode: kubernetes
-        kubeProxyReplacement: false
+        l7Proxy: true
+        kubeProxyReplacement: true
+        k8sServiceHost: 192.168.4.15
+        k8sServicePort: 6443
         securityContext:
           capabilities:
             ciliumAgent:
@@ -79,6 +77,44 @@ spec:
           autoMount:
             enabled: false
           hostRoot: /sys/fs/cgroup
+        ingressController:
+          enabled: true
+
+          # Makes the cilium IngressClass the default.
+          default: true
+
+          # One shared Envoy listener and LoadBalancer Service.
+          loadbalancerMode: shared
+
+          # Redirect HTTP to HTTPS when an Ingress defines TLS.
+          enforceHttps: true
+
+          service:
+            name: cilium-ingress
+            type: LoadBalancer
+
+            # Required/recommended with Cilium L2 announcements.
+            externalTrafficPolicy: Cluster
+
+            # Avoid allocating unnecessary NodePorts if all access is
+            # through Cilium's LB datapath.
+            allocateLoadBalancerNodePorts: false
+
+            labels:
+              exposure.cilium.io/type: ingress
+
+            annotations:
+              # Request the fixed address from Cilium LB IPAM.
+              lbipam.cilium.io/ips: "192.168.4.254"
+
+        l2announcements:
+          enabled: true
+
+        # L2 announcements use Kubernetes leases and increase API traffic.
+        # Adjust these for the number of announced Services.
+        k8sClientRateLimit:
+          qps: 20
+          burst: 40
   flux:
     url: "ssh://git@github.com/Margays/infrastructure.git"
     path: "flux/clusters/production"
