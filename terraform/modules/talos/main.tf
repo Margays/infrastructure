@@ -43,7 +43,7 @@ resource "proxmox_virtual_environment_vm" "talos" {
 
   name      = each.value.name
   tags      = [each.value.role, "kubernetes", "talos"]
-  node_name = "odroid01"
+  node_name = each.value.proxmox_node_name
 
   disk {
     datastore_id = "local-lvm"
@@ -73,7 +73,8 @@ resource "proxmox_virtual_environment_vm" "talos" {
   initialization {
     ip_config {
       ipv4 {
-        address = "dhcp"
+        address = each.value.network.address
+        gateway = each.value.network.gateway
       }
     }
   }

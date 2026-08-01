@@ -11,10 +11,12 @@ variable "configuration" {
         image              = string
       })
       nodes = list(object({
-        name = string
-        role = string
+        name              = string
+        role              = string
+        proxmox_node_name = string
         network = object({
           address     = string
+          gateway     = string
           bridge      = string
           mac_address = string
           vlan_id     = number

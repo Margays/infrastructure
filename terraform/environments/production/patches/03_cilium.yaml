@@ -11,8 +11,8 @@ cluster:
           name: ingress-pool
         spec:
           blocks:
-            - start: 192.168.50.20
-              stop: 192.168.50.254
+            - start: 10.0.0.20
+              stop: 10.0.0.254
 
           serviceSelector:
             matchLabels:
@@ -40,14 +40,3 @@ cluster:
 
           externalIPs: false
           loadBalancerIPs: true
-
-    # - name: cilium-ingress-class
-    #   contents: |
-    #     apiVersion: networking.k8s.io/v1
-    #     kind: IngressClass
-    #     metadata:
-    #       name: cilium
-    #       annotations:
-    #         ingressclass.kubernetes.io/is-default-class: "true"
-    #     spec:
-    #       controller: cilium.io/ingress-controller

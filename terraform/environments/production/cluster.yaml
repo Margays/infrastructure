@@ -8,33 +8,39 @@ spec:
   nodes:
     - name: "talos01"
       role: controlplane
+      proxmox_node_name: "odroid02"
       network:
-        address: "192.168.50.15"
+        address: "10.0.0.2"
+        gateway: "10.0.0.1"
         bridge: "vmbr0"
         mac_address: "BC:24:11:03:81:29"
-        vlan_id: 150
+        vlan_id: 1000
       resources:
         cpu: 4
         memory: 8192
         disk: 32
     - name: "talos02"
       role: worker
+      proxmox_node_name: "odroid02"
       network:
-        address: "192.168.50.16"
+        address: "10.0.0.3"
+        gateway: "10.0.0.1"
         bridge: "vmbr0"
         mac_address: "BC:24:11:28:D5:26"
-        vlan_id: 150
+        vlan_id: 1000
       resources:
         cpu: 4
         memory: 8192
         disk: 32
     - name: "talos03"
       role: worker
+      proxmox_node_name: "odroid02"
       network:
-        address: "192.168.50.17"
+        address: "10.0.0.4"
+        gateway: "10.0.0.1"
         bridge: "vmbr0"
         mac_address: "BC:24:11:62:09:59"
-        vlan_id: 150
+        vlan_id: 1000
       resources:
         cpu: 4
         memory: 8192
@@ -53,7 +59,7 @@ spec:
           mode: kubernetes
         l7Proxy: true
         kubeProxyReplacement: true
-        k8sServiceHost: 192.168.50.15
+        k8sServiceHost: 10.0.0.2
         k8sServicePort: 6443
         securityContext:
           capabilities:
@@ -105,7 +111,7 @@ spec:
 
             annotations:
               # Request the fixed address from Cilium LB IPAM.
-              lbipam.cilium.io/ips: "192.168.50.254"
+              lbipam.cilium.io/ips: "10.0.0.254"
 
         l2announcements:
           enabled: true
