@@ -1,8 +1,8 @@
 machine:
   nodeLabels:
-    gateway.cilium.io/enabled=true
+    gateway.cilium.io/enabled: "true"
 cluster:
-  extraManifests:
+  inlineManifests:
     - name: cilium-lb-ip-pool
       contents: |
         apiVersion: cilium.io/v2
@@ -27,7 +27,7 @@ cluster:
         spec:
           nodeSelector:
             matchLabels:
-              gateway.cilium.io/enable: "true"
+              gateway.cilium.io/enabled: "true"
 
           serviceSelector:
             matchLabels:
@@ -35,6 +35,7 @@ cluster:
 
           interfaces:
             - "^enp[0-9].*"
+            - "^ens[0-9].*"
             - "^eth[0-9]+$"
 
           externalIPs: false
