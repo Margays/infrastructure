@@ -9,14 +9,6 @@ variable "configuration" {
         kubernetes_version = string
         endpoint           = string
         image              = string
-        network = object({
-          cni = object({
-            name = string
-          })
-          proxy = object({
-            disabled = bool
-          })
-        })
       })
       nodes = list(object({
         name = string
