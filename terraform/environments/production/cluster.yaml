@@ -12,7 +12,7 @@ spec:
         address: "192.168.4.15"
         bridge: "vmbr0"
         mac_address: "BC:24:11:03:81:29"
-        vlan_id: 104
+        vlan_id: 204
       resources:
         cpu: 4
         memory: 8192
@@ -23,7 +23,7 @@ spec:
         address: "192.168.4.16"
         bridge: "vmbr0"
         mac_address: "BC:24:11:28:D5:26"
-        vlan_id: 104
+        vlan_id: 204
       resources:
         cpu: 4
         memory: 8192
@@ -34,7 +34,7 @@ spec:
         address: "192.168.4.17"
         bridge: "vmbr0"
         mac_address: "BC:24:11:62:09:59"
-        vlan_id: 104
+        vlan_id: 204
       resources:
         cpu: 4
         memory: 8192
@@ -105,7 +105,7 @@ spec:
 
             annotations:
               # Request the fixed address from Cilium LB IPAM.
-              lbipam.cilium.io/ips: "192.168.4.254"
+              lbipam.cilium.io/ips: "192.168.100.254"
 
         l2announcements:
           enabled: true

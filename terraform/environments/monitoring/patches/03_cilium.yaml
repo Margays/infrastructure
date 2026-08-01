@@ -11,8 +11,8 @@ cluster:
           name: ingress-pool
         spec:
           blocks:
-            - start: 192.168.100.20
-              stop: 192.168.100.254
+            - start: 192.168.4.151
+              stop: 192.168.4.254
 
           serviceSelector:
             matchLabels:
