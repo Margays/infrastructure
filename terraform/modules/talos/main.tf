@@ -73,8 +73,7 @@ resource "proxmox_virtual_environment_vm" "talos" {
   initialization {
     ip_config {
       ipv4 {
-        address = format("%s/%s", each.value.network.address, each.value.network.mask)
-        gateway = each.value.network.gateway
+        address = "dhcp"
       }
     }
   }

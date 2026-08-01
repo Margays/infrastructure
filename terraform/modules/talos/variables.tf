@@ -16,8 +16,6 @@ variable "configuration" {
         proxmox_node_name = string
         network = object({
           address     = string
-          mask        = number
-          gateway     = string
           bridge      = string
           mac_address = string
           vlan_id     = number
