@@ -3,7 +3,7 @@ spec:
   name: orion
   cluster:
     kubernetes_version: v1.36.0
-    endpoint: "https://192.168.4.15:6443"
+    endpoint: "https://10.0.0.2:6443"
     image: "https://factory.talos.dev/image/9c1d1b442d73f96dcd04e81463eb20000ab014062d22e1b083e1773336bc1dd5/v1.13.7/metal-amd64.iso"
   nodes:
     - name: "talos01"
