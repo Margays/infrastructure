@@ -3,8 +3,9 @@ kind: HelmRelease
 metadata:
   name: kagent-crds
 spec:
-  chartRef:
-    kind: OCIRepository
-    name: kagent-crds
+  chart:
+    chartRef:
+      kind: OCIRepository
+      name: kagent-crds
   values: {}
   interval: 1h

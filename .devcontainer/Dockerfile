@@ -13,6 +13,8 @@ RUN apt update && apt install -y wget curl gnupg software-properties-common \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
     && apt update && apt install -y terraform
 
+RUN apt update && apt install -y skopeo
+
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 \
     && chmod 700 get_helm.sh \
     && ./get_helm.sh
