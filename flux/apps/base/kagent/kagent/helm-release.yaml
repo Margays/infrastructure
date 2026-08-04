@@ -5,11 +5,9 @@ metadata:
 spec:
   dependsOn:
     - name: kagent-crds
-  chart:
-    spec:
-      chartRef:
-        kind: OCIRepository
-        name: kagent-crds
+  chartRef:
+    kind: OCIRepository
+    name: kagent-crds
   values:
     kgateway-agent:
       enabled: false
