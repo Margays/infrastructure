@@ -5,10 +5,8 @@ metadata:
 spec:
   chart:
     spec:
-      chart: kagent-crds
-      sourceRef:
+      chartRef:
         kind: OCIRepository
         name: kagent-crds
-      version: 0.9.12
   values: {}
   interval: 1h

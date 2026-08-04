@@ -7,11 +7,9 @@ spec:
     - name: kagent-crds
   chart:
     spec:
-      chart: kagent
-      sourceRef:
+      chartRef:
         kind: OCIRepository
         name: kagent-crds
-      version: 0.9.12
   values:
     kgateway-agent:
       enabled: false
