@@ -1,13 +1,13 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kagent-crds
+  name: kagent
 spec:
   dependsOn:
     - name: kagent-crds
   chart:
     spec:
-      chart: cert-manager
+      chart: kagent
       sourceRef:
         kind: OCIRepository
         name: kagent-crds
