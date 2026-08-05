@@ -19,4 +19,7 @@ spec:
       enabled: false
     argo-rollouts-agent:
       enabled: false
+    ui:
+      service:
+        type: LoadBalancer
   interval: 1h
