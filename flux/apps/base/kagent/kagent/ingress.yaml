@@ -1,0 +1,17 @@
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kagent-ingress
+spec:
+  rules:
+    - host: kagent.orion.lab.margays.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kagent-ui
+                port:
+                  number: 80
