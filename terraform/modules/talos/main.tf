@@ -1,19 +1,29 @@
 terraform {
   required_providers {
     proxmox = {
-      source = "bpg/proxmox"
+      source  = "bpg/proxmox"
+      version = "0.111.1"
     }
     talos = {
-      source = "siderolabs/talos"
+      source  = "siderolabs/talos"
+      version = "0.11.0"
     }
     helm = {
-      source = "hashicorp/helm"
+      source  = "hashicorp/helm"
+      version = "3.2.0"
     }
     flux = {
       source  = "fluxcd/flux"
       version = "1.9.3"
     }
   }
+}
+
+provider "proxmox" {
+  endpoint = var.secrets.proxmox.endpoint
+  username = var.secrets.proxmox.username
+  password = var.secrets.proxmox.password
+  insecure = var.secrets.proxmox.insecure
 }
 
 locals {

@@ -1,10 +1,9 @@
 # How to run
 1. Create terraform.tfvars in dir with this README.md
 ```
-project_name     = "orion"
-proxmox_endpoint = "https://example.local:8006"
-proxmox_username = "root@pam"
-proxmox_password = "???"
+vault_address = ""
+vault_token = ""
+config_path   = "./cluster.yaml"
 ```
 
 2. (Optional - s3 backend) Create config.s3.tfbackend

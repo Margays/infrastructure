@@ -93,3 +93,17 @@ variable "configuration" {
     error_message = "Manifest entries must define manifest contents."
   }
 }
+
+variable "secrets" {
+  description = "Talos cluster secrets."
+  sensitive   = true
+  type = object({
+    proxmox = object({
+      endpoint = string
+      username = string
+      password = string
+      insecure = bool
+      ca_cert  = optional(string)
+    })
+  })
+}

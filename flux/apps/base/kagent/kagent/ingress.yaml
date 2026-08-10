@@ -4,6 +4,9 @@ kind: Ingress
 metadata:
   name: kagent-ingress
 spec:
+  tls:
+    - hosts:
+        - kagent.orion.lab.margays.dev
   rules:
     - host: kagent.orion.lab.margays.dev
       http:
