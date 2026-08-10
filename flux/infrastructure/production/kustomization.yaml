@@ -4,6 +4,7 @@ resources:
   - ../base/cert-manager/
   - ../base/dragonfly/
   - ../base/storage/nfs/
+  - ../base/external-secrets/
 
 patches:
   - target:
