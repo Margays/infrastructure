@@ -68,28 +68,22 @@ data "kubernetes_secret" "external_secrets_sa_token" {
   ]
 }
 
-resource "vault_kubernetes_secret_backend" "config" {
-  path                 = format("kubernetes/%s", module.talos.name)
-  description          = format("%s kubernetes secrets engine", module.talos.name)
-  kubernetes_host      = module.talos.api_endpoint
-  kubernetes_ca_cert   = base64decode(module.talos.kubeconfig.kubernetes_client_configuration.ca_certificate)
-  service_account_jwt  = data.kubernetes_secret.external_secrets_sa_token.data["token"]
-  disable_local_ca_jwt = false
+resource "vault_auth_backend" "this" {
+  type        = "kubernetes"
+  path        = format("kubernetes/%s", module.talos.name)
+  description = format("Kubernetes auth backend for %s cluster", module.talos.name)
 }
 
-resource "vault_kubernetes_secret_backend_role" "role" {
-  backend                       = vault_kubernetes_secret_backend.config.path
-  name                          = format("%s-service-account-role", module.talos.name)
-  allowed_kubernetes_namespaces = ["*"]
-  token_max_ttl                 = 43200
-  token_default_ttl             = 3600
-  service_account_name          = local.external_secrets_sa_name
-  kubernetes_role_type          = "ClusterRole"
+resource "vault_kubernetes_auth_backend_config" "this" {
+  backend            = vault_auth_backend.this.path
+  kubernetes_host    = module.talos.api_endpoint
+  kubernetes_ca_cert = base64decode(module.talos.kubeconfig.kubernetes_client_configuration.ca_certificate)
+  token_reviewer_jwt = data.kubernetes_secret.external_secrets_sa_token.data["token"]
 }
 
-ephemeral "vault_kubernetes_service_account_token" "token" {
-  backend              = vault_kubernetes_secret_backend.config.path
-  role                 = vault_kubernetes_secret_backend_role.role.name
-  kubernetes_namespace = local.external_secrets_namespace
-  mount_id             = vault_kubernetes_secret_backend.config.id
+resource "vault_kubernetes_auth_backend_role" "external_secrets" {
+  backend                          = vault_auth_backend.this.path
+  role_name                        = "external-secrets"
+  bound_service_account_names      = ["external-secrets"]
+  bound_service_account_namespaces = ["external-secrets"]
 }
