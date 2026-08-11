@@ -1,5 +1,6 @@
 name: Continous Integration
 on:
+  merge_group:
   pull_request:
     branches:
       - main
