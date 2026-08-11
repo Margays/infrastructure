@@ -3,47 +3,46 @@ spec:
   name: orion
   cluster:
     kubernetes_version: v1.36.0
-    endpoint: "https://192.168.4.15:6443"
-    image: "https://factory.talos.dev/image/9c1d1b442d73f96dcd04e81463eb20000ab014062d22e1b083e1773336bc1dd5/v1.13.7/metal-amd64.iso"
-    network:
-      cni:
-        name: "none"
-      proxy:
-        disabled: false
+    endpoint: "https://10.0.0.2:6443"
+    image: "https://factory.talos.dev/image/eb9f56e16162aba08217e4e4de4777645ca9a296101c2fe48e8f528d20ba57d7/v1.13.8/metal-amd64.iso"
   nodes:
     - name: "talos01"
       role: controlplane
+      proxmox_node_name: "odroid02"
       network:
-        address: "192.168.4.15"
+        address: "10.0.0.2"
         bridge: "vmbr0"
-        mac_address: "BC:24:11:03:81:29"
-        vlan_id: 104
+        mac_address: "BC:24:11:00:00:01"
+        vlan_id: 1000
       resources:
         cpu: 4
         memory: 8192
         disk: 32
     - name: "talos02"
       role: worker
+      proxmox_node_name: "odroid02"
       network:
-        address: "192.168.4.16"
+        address: "10.0.0.3"
         bridge: "vmbr0"
-        mac_address: "BC:24:11:28:D5:26"
-        vlan_id: 104
+        mac_address: "BC:24:11:00:00:02"
+        vlan_id: 1000
       resources:
         cpu: 4
         memory: 8192
         disk: 32
     - name: "talos03"
       role: worker
+      proxmox_node_name: "odroid02"
       network:
-        address: "192.168.4.17"
+        address: "10.0.0.4"
         bridge: "vmbr0"
-        mac_address: "BC:24:11:62:09:59"
-        vlan_id: 104
+        mac_address: "BC:24:11:00:00:03"
+        vlan_id: 1000
       resources:
         cpu: 4
         memory: 8192
         disk: 32
+  config_patches_directory: "patches"
   manifests:
     - name: cilium
       type: helm
@@ -55,7 +54,10 @@ spec:
       values:
         ipam:
           mode: kubernetes
-        kubeProxyReplacement: false
+        l7Proxy: true
+        kubeProxyReplacement: true
+        k8sServiceHost: 10.0.0.2
+        k8sServicePort: 6443
         securityContext:
           capabilities:
             ciliumAgent:
@@ -78,6 +80,44 @@ spec:
           autoMount:
             enabled: false
           hostRoot: /sys/fs/cgroup
+        ingressController:
+          enabled: true
+
+          # Makes the cilium IngressClass the default.
+          default: true
+
+          # One shared Envoy listener and LoadBalancer Service.
+          loadbalancerMode: shared
+
+          # Redirect HTTP to HTTPS when an Ingress defines TLS.
+          enforceHttps: true
+
+          service:
+            name: cilium-ingress
+            type: LoadBalancer
+
+            # Required/recommended with Cilium L2 announcements.
+            externalTrafficPolicy: Cluster
+
+            # Avoid allocating unnecessary NodePorts if all access is
+            # through Cilium's LB datapath.
+            allocateLoadBalancerNodePorts: false
+
+            labels:
+              exposure.cilium.io/type: ingress
+
+            annotations:
+              # Request the fixed address from Cilium LB IPAM.
+              lbipam.cilium.io/ips: "10.0.0.254"
+
+        l2announcements:
+          enabled: true
+
+        # L2 announcements use Kubernetes leases and increase API traffic.
+        # Adjust these for the number of announced Services.
+        k8sClientRateLimit:
+          qps: 20
+          burst: 40
   flux:
     url: "ssh://git@github.com/Margays/infrastructure.git"
     path: "flux/clusters/production"

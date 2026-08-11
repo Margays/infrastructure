@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-secrets
+spec:
+  chart:
+    spec:
+      chart: external-secrets
+      sourceRef:
+        kind: HelmRepository
+        name: external-secrets-repository
+      version: 2.8.0
+  values:
+    installCRDs: true
+    serviceAccount:
+      create: false
+      # If empty, Helm's fullname template would normally generate a name when create=true.
+      # Set this to the existing ServiceAccount name you want the chart to use.
+      name: external-secrets
+
+    rbac:
+      # Keep RBAC creation enabled so the chart will create Role/RoleBinding
+      # (or ClusterRole/ClusterRoleBinding) that reference the provided service account.
+      create: true
+      # Keep serviceAccountTokenCreate true so the controller can create tokenSecrets if needed.
+      serviceAccountTokenCreate: true
+
+  interval: 1h

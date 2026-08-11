@@ -1,7 +1,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: jetstack-repository
+  name: dragonfly-repository
 spec:
   interval: 1h
-  url: https://charts.jetstack.io
+  url: https://dragonflyoss.github.io/helm-charts/

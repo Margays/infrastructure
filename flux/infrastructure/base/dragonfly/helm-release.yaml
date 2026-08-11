@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dragonfly
+spec:
+  chart:
+    spec:
+      chart: dragonfly
+      sourceRef:
+        kind: HelmRepository
+        name: dragonfly-repository
+      version: 1.7.6
+  values:
+    scheduler:
+      image:
+        repository: dragonflyoss/scheduler
+        tag: latest
+      metrics:
+        enable: true
+
+    seedClient:
+      image:
+        repository: dragonflyoss/client
+        tag: latest
+      metrics:
+        enable: true
+
+    client:
+      image:
+        repository: dragonflyoss/client
+        tag: latest
+      metrics:
+        enable: true
+      dfinit:
+        enable: false  # Talos does not support dfinit due to read-only root filesystem, so we disable it to avoid errors
+  interval: 1h

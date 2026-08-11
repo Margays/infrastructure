@@ -1,0 +1,14 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-traces-cluster
+spec:
+  chart:
+    spec:
+      chart: victoria-traces-cluster
+      sourceRef:
+        kind: HelmRepository
+        name: vm-repository
+      version: 0.2.9
+  values: {}
+  interval: 1h

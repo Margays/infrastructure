@@ -1,0 +1,42 @@
+machine:
+  nodeLabels:
+    gateway.cilium.io/enabled: "true"
+cluster:
+  inlineManifests:
+    - name: cilium-lb-ip-pool
+      contents: |
+        apiVersion: cilium.io/v2
+        kind: CiliumLoadBalancerIPPool
+        metadata:
+          name: ingress-pool
+        spec:
+          blocks:
+            - start: 10.0.0.20
+              stop: 10.0.0.254
+
+          serviceSelector:
+            matchLabels:
+              exposure.cilium.io/type: ingress
+
+    - name: cilium-l2-announcement-policy
+      contents: |
+        apiVersion: cilium.io/v2alpha1
+        kind: CiliumL2AnnouncementPolicy
+        metadata:
+          name: ingress-l2
+        spec:
+          nodeSelector:
+            matchLabels:
+              gateway.cilium.io/enabled: "true"
+
+          serviceSelector:
+            matchLabels:
+              exposure.cilium.io/type: ingress
+
+          interfaces:
+            - "^enp[0-9].*"
+            - "^ens[0-9].*"
+            - "^eth[0-9]+$"
+
+          externalIPs: false
+          loadBalancerIPs: true

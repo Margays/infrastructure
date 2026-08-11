@@ -9,18 +9,11 @@ variable "configuration" {
         kubernetes_version = string
         endpoint           = string
         image              = string
-        network = object({
-          cni = object({
-            name = string
-          })
-          proxy = object({
-            disabled = bool
-          })
-        })
       })
       nodes = list(object({
-        name = string
-        role = string
+        name              = string
+        role              = string
+        proxmox_node_name = string
         network = object({
           address     = string
           bridge      = string
@@ -44,6 +37,7 @@ variable "configuration" {
         values     = optional(any)
         manifest   = optional(string)
       }))
+      config_patches_directory = optional(string)
       flux = object({
         url              = string
         path             = string
@@ -98,4 +92,18 @@ variable "configuration" {
     condition     = alltrue([for manifest in var.configuration.spec.manifests : manifest.type != "manifest" || manifest.manifest != null])
     error_message = "Manifest entries must define manifest contents."
   }
+}
+
+variable "secrets" {
+  description = "Talos cluster secrets."
+  sensitive   = true
+  type = object({
+    proxmox = object({
+      endpoint = string
+      username = string
+      password = string
+      insecure = bool
+      ca_cert  = optional(string)
+    })
+  })
 }

@@ -1,0 +1,22 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kagent
+spec:
+  dependsOn:
+    - name: kagent-crds
+  chartRef:
+    kind: OCIRepository
+    name: kagent
+  values:
+    kgateway-agent:
+      enabled: false
+    istio-agent:
+      enabled: false
+    promql-agent:
+      enabled: false
+    observability-agent:
+      enabled: false
+    argo-rollouts-agent:
+      enabled: false
+  interval: 1h

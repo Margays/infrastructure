@@ -1,0 +1,9 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: kagent
+spec:
+  interval: 1h
+  url: oci://ghcr.io/kagent-dev/kagent/helm/kagent
+  ref:
+    tag: 0.9.12

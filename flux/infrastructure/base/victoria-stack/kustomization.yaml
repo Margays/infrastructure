@@ -1,7 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: cert-manager
+namespace: victoria-metrics
 resources:
   - namespace.yaml
   - repository.yaml
-  - helm-release.yaml
+  - vm-logs-cluster.yaml
+  - vm-metrics-cluster.yaml
+  - vm-traces-cluster.yaml

@@ -1,0 +1,26 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+spec:
+  chart:
+    spec:
+      chart: grafana
+      sourceRef:
+        kind: HelmRepository
+        name: grafana-repository
+      version: 10.5.15
+  values:
+    adminUser: admin
+    adminPassword: admin
+    persistence:
+      enabled: true
+      storageClassName: nfs-client
+      accessModes:
+        - ReadWriteMany
+      size: 10Gi
+    service:
+      type: ClusterIP
+    ingress:
+      enabled: true
+  interval: 1h

@@ -1,5 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: kagent
 resources:
-  - ../base/kagent/
-  - ../base/cluster_secret_store.yaml
+  - namespace.yaml
+  - crds/
+  - kagent/
