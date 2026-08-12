@@ -1,0 +1,114 @@
+kind: TalosCluster
+spec:
+  name: orion
+  cluster:
+    kubernetes_version: v1.36.0
+    endpoint: "https://10.0.1.2:6443"
+    image: "https://factory.talos.dev/image/eb9f56e16162aba08217e4e4de4777645ca9a296101c2fe48e8f528d20ba57d7/v1.13.8/metal-amd64.iso"
+  nodes:
+    - name: "monitoring01"
+      role: controlplane
+      proxmox_node_name: "odroid03"
+      network:
+        address: "10.0.1.2"
+        bridge: "vmbr0"
+        mac_address: "BC:24:11:01:00:01"
+        vlan_id: 1001
+      resources:
+        cpu: 4
+        memory: 4096
+        disk: 32
+    - name: "monitoring02"
+      role: worker
+      proxmox_node_name: "odroid03"
+      network:
+        address: "10.0.1.3"
+        bridge: "vmbr0"
+        mac_address: "BC:24:11:01:00:02"
+        vlan_id: 1001
+      resources:
+        cpu: 4
+        memory: 4096
+        disk: 32
+  config_patches_directory: "patches"
+  manifests:
+    - name: cilium
+      type: helm
+      phase: bootstrap
+      namespace: kube-system
+      chart: cilium
+      version: 1.19.6
+      repository: https://helm.cilium.io
+      values:
+        ipam:
+          mode: kubernetes
+        l7Proxy: true
+        kubeProxyReplacement: true
+        k8sServiceHost: 10.0.1.2
+        k8sServicePort: 6443
+        securityContext:
+          capabilities:
+            ciliumAgent:
+              - CHOWN
+              - KILL
+              - NET_ADMIN
+              - NET_RAW
+              - IPC_LOCK
+              - SYS_ADMIN
+              - SYS_RESOURCE
+              - DAC_OVERRIDE
+              - FOWNER
+              - SETGID
+              - SETUID
+            cleanCiliumState:
+              - NET_ADMIN
+              - SYS_ADMIN
+              - SYS_RESOURCE
+        cgroup:
+          autoMount:
+            enabled: false
+          hostRoot: /sys/fs/cgroup
+        ingressController:
+          enabled: true
+
+          # Makes the cilium IngressClass the default.
+          default: true
+
+          # One shared Envoy listener and LoadBalancer Service.
+          loadbalancerMode: shared
+
+          # Redirect HTTP to HTTPS when an Ingress defines TLS.
+          enforceHttps: true
+
+          service:
+            name: cilium-ingress
+            type: LoadBalancer
+
+            # Required/recommended with Cilium L2 announcements.
+            externalTrafficPolicy: Cluster
+
+            # Avoid allocating unnecessary NodePorts if all access is
+            # through Cilium's LB datapath.
+            allocateLoadBalancerNodePorts: false
+
+            labels:
+              exposure.cilium.io/type: ingress
+
+            annotations:
+              # Request the fixed address from Cilium LB IPAM.
+              lbipam.cilium.io/ips: "10.0.1.254"
+
+        l2announcements:
+          enabled: true
+
+        # L2 announcements use Kubernetes leases and increase API traffic.
+        # Adjust these for the number of announced Services.
+        k8sClientRateLimit:
+          qps: 20
+          burst: 40
+  flux:
+    url: "ssh://git@github.com/Margays/infrastructure.git"
+    path: "flux/clusters/monitoring"
+    username: "git"
+    private_key_file: "/home/lukaszwencel/.ssh/id_ed25519"
+    patch_file: null
