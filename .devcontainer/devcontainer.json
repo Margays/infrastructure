@@ -11,7 +11,8 @@
         }
     },
     "mounts": [
-        "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/${localEnv:USER}/.ssh,readonly"
+        "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/${localEnv:USER}/.ssh,readonly",
+        "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube,target=/home/${localEnv:USER}/.kube"
     ],
     "remoteUser": "${localEnv:USER}",
     "hostRequirements": {
