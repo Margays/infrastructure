@@ -29,6 +29,21 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: metrics-server
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: dragonfly
+  interval: 1m
+  path: ./flux/infrastructure/metrics-server/overlays
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: external-secrets-controller
   namespace: flux-system
 spec:
