@@ -50,7 +50,7 @@ spec:
   dependsOn:
     - name: external-secrets-controller
   interval: 1m
-  path: ./flux/infrastructure/external-secrets/config/overlays/
+  path: ./flux/infrastructure/external-secrets/config/overlays
   prune: true
   sourceRef:
     kind: GitRepository
@@ -65,7 +65,7 @@ spec:
   dependsOn:
     - name: external-secrets-config
   interval: 1m
-  path: ./flux/infrastructure/storage/overlays/monitoring
+  path: ./flux/infrastructure/storage/overlays
   prune: true
   sourceRef:
     kind: GitRepository
@@ -80,7 +80,7 @@ spec:
   dependsOn:
     - name: storage
   interval: 1m
-  path: ./flux/infrastructure/victoria-stack/overlays/monitoring
+  path: ./flux/infrastructure/victoria-stack/overlays
   prune: true
   sourceRef:
     kind: GitRepository
