@@ -10,4 +10,4 @@ patches:
     patch: |-
       - op: replace
         path: /spec/provider/vault/mountPath
-        value: "kubernetes/monitoring"
+        value: kubernetes/monitoring
