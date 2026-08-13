@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base/nfs
+
+patches:
+  - target:
+      kind: HelmRelease
+      name: nfs-subdir-external-provisioner
+    patch: |-
+      - op: replace
+        path: /spec/values/nfs/path
+        value: /mnt/main/lab/clusters/monitoring
