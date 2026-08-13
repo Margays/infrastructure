@@ -15,5 +15,7 @@ spec:
     apiService:
       insecureSkipTLSVerify: false
     tls:
-      type: helm
+      type: cert-manager
+    args:
+      - --kubelet-insecure-tls
   interval: 1h
