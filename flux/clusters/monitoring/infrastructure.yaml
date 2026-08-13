@@ -1,11 +1,86 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: infrastructure
+  name: dragonfly
   namespace: flux-system
 spec:
   interval: 1m
-  path: ./flux/infrastructure/monitoring
+  path: ./flux/infrastructure/dragonfly/overlays
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cert-manager-controller
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: dragonfly
+  interval: 1m
+  path: ./flux/infrastructure/cert-manager/controller/overlays
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: external-secrets-controller
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: dragonfly
+  interval: 1m
+  path: ./flux/infrastructure/external-secrets/controller/overlays
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: external-secrets-config
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: external-secrets
+  interval: 1m
+  path: ./flux/infrastructure/external-secrets/config/overlays/
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: storage
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: external-secrets-config
+  interval: 1m
+  path: ./flux/infrastructure/storage/overlays/monitoring
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: victoria-stack
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: storage
+  interval: 1m
+  path: ./flux/infrastructure/victoria-stack/overlays/monitoring
   prune: true
   sourceRef:
     kind: GitRepository
