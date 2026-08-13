@@ -6,3 +6,7 @@ cluster:
   proxy:
     # Disable kube-proxy, Cilium will replace it too
     disabled: true
+machine:
+  kubelet:
+    extraArgs:
+      rotate-server-certificates: true
