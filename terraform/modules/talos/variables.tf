@@ -34,7 +34,7 @@ variable "configuration" {
         chart      = optional(string)
         version    = optional(string)
         repository = optional(string)
-        values     = optional(any)
+        values     = optional(string)
         manifest   = optional(string)
       }))
       config_patches_directory = optional(string)

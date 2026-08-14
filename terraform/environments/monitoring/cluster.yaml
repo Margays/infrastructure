@@ -39,7 +39,7 @@ spec:
       chart: cilium
       version: 1.19.6
       repository: https://helm.cilium.io
-      values:
+      values: |
         ipam:
           mode: kubernetes
         l7Proxy: true

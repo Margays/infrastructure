@@ -103,7 +103,7 @@ data "helm_template" "this" {
   version      = each.value.version
   kube_version = trimprefix(var.configuration.spec.cluster.kubernetes_version, "v")
 
-  values = [yamlencode(each.value.values)]
+  values = [each.value.values]
 }
 
 resource "talos_machine_secrets" "this" {}
