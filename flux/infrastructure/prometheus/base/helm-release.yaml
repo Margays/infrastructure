@@ -1,0 +1,56 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+spec:
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+      version: 88.3.0
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 5
+      retryInterval: 1m
+  values:
+    alertmanager:
+      enabled: true
+      alertmanagerSpec:
+        storage:
+          volumeClaimTemplate:
+            spec:
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 2Gi
+              storageClassName: nfs-client
+    prometheus:
+      enabled: true
+      retention: 12h
+      prometheusSpec:
+        remoteWrite:
+          - url: http://victoriametrics-cluster-vmselect.victoria-metrics.svc.cluster.local:8480/api/v1/write
+            tlsConfig:
+              insecureSkipVerify: true
+            writeRelabelConfigs:
+              - action: replace
+                replacement: "unknown-cluster"
+                sourceLabels: []
+                targetLabel: source_cluster
+        # storage:
+        #   volumeClaimTemplate:
+        #     spec:
+        #       accessModes: ["ReadWriteOnce"]
+        #       resources:
+        #         requests:
+        #           storage: 10Gi
+        #       storageClassName: nfs-client
+    kubeProxy:
+      enabled: false
+    grafana:
+      enabled: false
+    
+  interval: 1h
