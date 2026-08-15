@@ -7,6 +7,7 @@ spec:
   interval: 1m
   path: ./flux/infrastructure/cert-manager/controller/overlays
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -20,6 +21,7 @@ spec:
   interval: 1m
   path: ./flux/infrastructure/metrics-server/overlays
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -33,6 +35,7 @@ spec:
   interval: 1m
   path: ./flux/infrastructure/external-secrets/controller/overlays
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -48,6 +51,7 @@ spec:
   interval: 1m
   path: ./flux/infrastructure/external-secrets/config/overlays/monitoring
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -63,6 +67,7 @@ spec:
   interval: 1m
   path: ./flux/infrastructure/storage/overlays/monitoring
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -78,6 +83,7 @@ spec:
   interval: 1m
   path: ./flux/infrastructure/dragonfly/overlays
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -93,6 +99,7 @@ spec:
   interval: 1m
   path: ./flux/infrastructure/victoria-stack/overlays
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -108,6 +115,7 @@ spec:
   interval: 1m
   path: ./flux/infrastructure/prometheus/overlays/monitoring
   prune: true
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
