@@ -22,6 +22,7 @@ data "vault_generic_secret" "proxmox" {
   path = "kv/proxmox"
 }
 
+
 module "talos" {
   source        = "../../modules/talos"
   configuration = yamldecode(file(var.config_path))
@@ -37,7 +38,7 @@ module "talos" {
 
 resource "local_file" "kubeconfig" {
   content  = module.talos.kubeconfig.kubeconfig_raw
-  filename = "./kubeconfig"
+  filename = "~/.kube/config"
 }
 
 output "kubeconfig" {
