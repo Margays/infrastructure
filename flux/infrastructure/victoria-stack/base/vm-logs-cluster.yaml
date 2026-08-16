@@ -10,5 +10,13 @@ spec:
         kind: HelmRepository
         name: vm-repository
       version: 0.2.8
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: -1
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: -1
   values: {}
   interval: 1h

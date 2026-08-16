@@ -11,6 +11,12 @@ spec:
         kind: HelmRepository
         name: metrics-server
       version: 3.13.1
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: -1
   values:
     apiService:
       insecureSkipTLSVerify: false

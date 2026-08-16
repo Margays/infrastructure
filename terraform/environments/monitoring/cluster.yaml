@@ -16,7 +16,7 @@ spec:
         vlan_id: 1001
       resources:
         cpu: 4
-        memory: 4096
+        memory: 6144
         disk: 32
     - name: "monitoring02"
       role: worker
@@ -28,7 +28,7 @@ spec:
         vlan_id: 1001
       resources:
         cpu: 4
-        memory: 8192
+        memory: 10240
         disk: 32
   config_patches_directory: "patches"
   manifests:

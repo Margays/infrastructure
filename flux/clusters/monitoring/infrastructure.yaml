@@ -4,7 +4,9 @@ metadata:
   name: cert-manager-controller
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 30m
+  retryInterval: 5m
+  timeout: 5m
   path: ./flux/infrastructure/cert-manager/controller/overlays
   prune: true
   wait: true
@@ -18,7 +20,11 @@ metadata:
   name: metrics-server
   namespace: flux-system
 spec:
-  interval: 1m
+  dependsOn:
+    - name: cert-manager-controller
+  interval: 30m
+  retryInterval: 5m
+  timeout: 5m
   path: ./flux/infrastructure/metrics-server/overlays
   prune: true
   wait: true
@@ -32,7 +38,9 @@ metadata:
   name: external-secrets-controller
   namespace: flux-system
 spec:
-  interval: 1m
+  interval: 30m
+  retryInterval: 5m
+  timeout: 5m
   path: ./flux/infrastructure/external-secrets/controller/overlays
   prune: true
   wait: true
@@ -48,7 +56,9 @@ metadata:
 spec:
   dependsOn:
     - name: external-secrets-controller
-  interval: 1m
+  interval: 30m
+  retryInterval: 5m
+  timeout: 5m
   path: ./flux/infrastructure/external-secrets/config/overlays/monitoring
   prune: true
   wait: true
@@ -64,7 +74,9 @@ metadata:
 spec:
   dependsOn:
     - name: external-secrets-config
-  interval: 1m
+  interval: 30m
+  retryInterval: 5m
+  timeout: 10m
   path: ./flux/infrastructure/storage/overlays/monitoring
   prune: true
   wait: true
@@ -80,7 +92,9 @@ metadata:
 spec:
   dependsOn:
     - name: storage
-  interval: 1m
+  interval: 1h
+  retryInterval: 10m
+  timeout: 15m
   path: ./flux/infrastructure/dragonfly/overlays
   prune: true
   wait: true
@@ -96,7 +110,9 @@ metadata:
 spec:
   dependsOn:
     - name: dragonfly
-  interval: 1m
+  interval: 1h
+  retryInterval: 10m
+  timeout: 15m
   path: ./flux/infrastructure/victoria-stack/overlays
   prune: true
   wait: true
@@ -112,7 +128,9 @@ metadata:
 spec:
   dependsOn:
     - name: victoria-stack
-  interval: 1m
+  interval: 1h
+  retryInterval: 10m
+  timeout: 15m
   path: ./flux/infrastructure/prometheus/overlays/monitoring
   prune: true
   wait: true
