@@ -18,6 +18,11 @@ spec:
         tag: latest
       metrics:
         enable: true
+    
+    mysql:
+      enable: true
+    redis:
+      enable: true
       
     scheduler:
       image:
