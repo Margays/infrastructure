@@ -12,6 +12,7 @@ spec:
       version: 1.7.6
   values:
     manager:
+      enable: true
       image:
         repository: dragonflyoss/manager
         tag: latest
