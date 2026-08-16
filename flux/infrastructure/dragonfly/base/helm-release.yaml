@@ -11,6 +11,13 @@ spec:
         name: dragonfly-repository
       version: 1.7.6
   values:
+    manager:
+      image:
+        repository: dragonflyoss/manager
+        tag: latest
+      metrics:
+        enable: true
+      
     scheduler:
       image:
         repository: dragonflyoss/scheduler
@@ -31,6 +38,10 @@ spec:
         tag: latest
       metrics:
         enable: true
+      config:
+        host:
+          # Specify the schedulerClusterID to distinguish different Dragonfly clusters.
+          schedulerClusterID: 1
       dfinit:
         enable: false  # Talos does not support dfinit due to read-only root filesystem, so we disable it to avoid errors
   interval: 1h

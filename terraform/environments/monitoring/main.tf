@@ -36,45 +36,9 @@ module "talos" {
   }
 }
 
-locals {
-  kubeconfig_path = "~/.kube/config"
-
-  existing_kubeconfig = try(yamldecode(file(local.kubeconfig_path)), {})
-
-  new_kubeconfig = yamldecode(module.talos.kubeconfig.kubeconfig_raw)
-
-  existing_clusters = lookup(local.existing_kubeconfig, "clusters", [])
-  existing_contexts = lookup(local.existing_kubeconfig, "contexts", [])
-  existing_users    = lookup(local.existing_kubeconfig, "users", [])
-
-  new_clusters = lookup(local.new_kubeconfig, "clusters", [])
-  new_contexts = lookup(local.new_kubeconfig, "contexts", [])
-  new_users    = lookup(local.new_kubeconfig, "users", [])
-
-  merged_clusters = values({ for c in concat(local.existing_clusters, local.new_clusters) : c.name => c })
-  merged_contexts = values({ for c in concat(local.existing_contexts, local.new_contexts) : c.name => c })
-  merged_users    = values({ for u in concat(local.existing_users, local.new_users) : u.name => u })
-
-  merged_kubeconfig = merge(
-    local.existing_kubeconfig,
-    {
-      clusters = local.merged_clusters,
-      contexts = local.merged_contexts,
-      users    = local.merged_users,
-      # prefer new current-context if provided, otherwise keep existing
-      "current-context" = lookup(local.new_kubeconfig, "current-context", lookup(local.existing_kubeconfig, "current-context", ""))
-    }
-  )
-
-  merged_kubeconfig_yaml = yamlencode(local.merged_kubeconfig)
-}
-
 resource "local_file" "kubeconfig" {
-  filename = "~/.kube/config"
-  # Merge the new kubeconfig into any existing kubeconfig, preferring
-  # entries from the new config when names collide.
-  content    = local.merged_kubeconfig_yaml
-  depends_on = [module.talos]
+  content  = module.talos.kubeconfig.kubeconfig_raw
+  filename = "./kubeconfig"
 }
 
 output "kubeconfig" {
