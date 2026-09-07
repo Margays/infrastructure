@@ -20,7 +20,7 @@ spec:
       retries: -1
   values:
     manager:
-      enable: true
+      enable: false
       image:
         repository: dragonflyoss/manager
         tag: latest
@@ -28,11 +28,12 @@ spec:
         enable: true
     
     mysql:
-      enable: true
+      enable: false
     redis:
-      enable: true
+      enable: false
       
     scheduler:
+      enable: false
       image:
         repository: dragonflyoss/scheduler
         tag: latest
