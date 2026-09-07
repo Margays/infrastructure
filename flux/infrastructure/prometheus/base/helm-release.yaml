@@ -43,14 +43,6 @@ spec:
                 replacement: "unknown-cluster"
                 sourceLabels: []
                 targetLabel: source_cluster
-        # storage:
-        #   volumeClaimTemplate:
-        #     spec:
-        #       accessModes: ["ReadWriteOnce"]
-        #       resources:
-        #         requests:
-        #           storage: 10Gi
-        #       storageClassName: nfs-client
     kubeProxy:
       enabled: false
     grafana:
