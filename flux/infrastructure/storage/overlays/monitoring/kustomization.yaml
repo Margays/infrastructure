@@ -10,4 +10,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/values/nfs/path
-        value: /mnt/main/lab/clusters/monitoring
+        value: /volume2/nfs/clusters/monitoring
+      - op: replace
+        path: /spec/values/nfs/server
+        value: 192.168.2.2
