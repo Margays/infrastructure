@@ -13,4 +13,4 @@ patches:
         value: true
       - op: replace
         path: /spec/values/prometheus/prometheusSpec/remoteWrite/0/writeRelabelConfigs/0/replacement
-        value: monitoring
+        value: production
