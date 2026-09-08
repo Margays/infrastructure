@@ -17,7 +17,7 @@ spec:
       resources:
         cpu: 4
         memory: 6144
-        disk: 32
+        disk: 64
     - name: "monitoring02"
       role: worker
       proxmox_node_name: "odroid03"
@@ -29,7 +29,7 @@ spec:
       resources:
         cpu: 4
         memory: 10240
-        disk: 32
+        disk: 128
   config_patches_directory: "patches"
   manifests:
     - name: cilium
