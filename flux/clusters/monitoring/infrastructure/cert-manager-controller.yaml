@@ -1,0 +1,15 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cert-manager-controller
+  namespace: flux-system
+spec:
+  interval: 30m
+  retryInterval: 5m
+  timeout: 5m
+  path: ./flux/infrastructure/cert-manager/controller/overlays/monitoring
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
