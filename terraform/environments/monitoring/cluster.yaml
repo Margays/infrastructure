@@ -29,7 +29,7 @@ spec:
       resources:
         cpu: 4
         memory: 10240
-        disk: 128
+        disk: 64
   config_patches_directory: "patches"
   manifests:
     - name: cilium
