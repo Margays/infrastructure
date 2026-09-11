@@ -1,6 +1,14 @@
 ---
 apiVersion: v1alpha1
 kind: RegistryMirrorConfig
-name: '*'
+name: docker.io
 endpoints:
-  - url: "http://127.0.0.1:4001"
+  - url: https://harbour.lab.margays.dev/v2/dockerhub
+    overridePath: true
+---
+apiVersion: v1alpha1
+kind: RegistryMirrorConfig
+name: ghcr.io
+endpoints:
+  - url: https://harbour.lab.margays.dev/v2/github-cr
+    overridePath: true
