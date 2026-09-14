@@ -21,7 +21,7 @@ spec:
               service:
                 name: victoria-logs-cluster-vlinsert
                 port:
-                  number: 9471
+                  number: 9481
     - host: metrics.monitoring.lab.margays.dev
       http:
         paths:
@@ -31,7 +31,7 @@ spec:
               service:
                 name: victoria-metrics-cluster-vminsert
                 port:
-                  number: 8481
+                  number: 8480
     - host: traces.monitoring.lab.margays.dev
       http:
         paths:
@@ -41,4 +41,4 @@ spec:
               service:
                 name: victoria-traces-cluster-vt-cluster-vtinsert
                 port:
-                  number: 10471
+                  number: 10481
