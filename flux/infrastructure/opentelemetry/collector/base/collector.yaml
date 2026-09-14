@@ -17,17 +17,17 @@ spec:
 
     exporters:
       otlphttp/traces:
-        endpoint: http://victoria-traces-cluster-vt-cluster-vtinsert.monitoring.svc:10481/opentelemetry
-        tls:
-          insecure: true
+        traces_endpoint: http://victoria-traces-cluster-vt-cluster-vtinsert.victoria-metrics.svc.cluster.local:10481/insert/0/opentelemetry/v1/traces
+        encoding: proto
+        compression: gzip
       otlphttp/metrics:
-        endpoint: http://victoria-metrics-cluster-vminsert.monitoring.svc:8480/opentelemetry
-        tls:
-          insecure: true
+        metrics_endpoint: http://victoria-metrics-cluster-vminsert.victoria-metrics.svc.cluster.local:8480/insert/0/opentelemetry/v1/metrics
+        encoding: proto
+        compression: gzip
       otlphttp/logs:
-        endpoint: http://victoria-logs-cluster-vlinsert.monitoring.svc:9481/opentelemetry
-        tls:
-          insecure: true
+        logs_endpoint: http://victoria-logs-cluster-vlinsert.victoria-metrics.svc.cluster.local:9481/insert/0/opentelemetry/v1/logs
+        encoding: proto
+        compression: gzip
 
     service:
       pipelines:
