@@ -19,7 +19,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: victoria-logs-cluster-vlselect
+                name: victoria-logs-cluster-vlinsert
                 port:
                   number: 9471
     - host: metrics.monitoring.lab.margays.dev
@@ -29,7 +29,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: victoria-metrics-cluster-vmselect
+                name: victoria-metrics-cluster-vminsert
                 port:
                   number: 8481
     - host: traces.monitoring.lab.margays.dev
@@ -39,6 +39,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: victoria-traces-cluster-vt-cluster-vtselect
+                name: victoria-traces-cluster-vt-cluster-vtinsert
                 port:
                   number: 10471
