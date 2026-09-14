@@ -13,7 +13,6 @@ graph TD
     external_secrets_config[external-secrets-config]
     storage[storage]
     cert_manager_config[cert-manager-config]
-    dragonfly[dragonfly]
     victoria_stack[victoria-stack]
     prometheus_stack[prometheus-stack]
     apps[apps]
@@ -23,9 +22,7 @@ graph TD
     external_secrets_config --> storage
     external_secrets_config --> cert_manager_config
     cert_manager_controller --> cert_manager_config
-    storage --> dragonfly
     cert_manager_config --> victoria_stack
-    dragonfly --> victoria_stack
     victoria_stack --> prometheus_stack
     cert_manager_config --> prometheus_stack
     victoria_stack --> apps
@@ -41,8 +38,7 @@ graph TD
 | `external-secrets-config` | `flux/infrastructure/external-secrets/config/overlays/monitoring` |
 | `storage` | `flux/infrastructure/storage/overlays/monitoring` |
 | `cert-manager-config` | `flux/infrastructure/cert-manager/config/overlays` |
-| `dragonfly` | `flux/infrastructure/dragonfly/overlays` |
-| `victoria-stack` | `flux/infrastructure/victoria-stack/overlays` |
+| `victoria-stack` | `flux/infrastructure/victoria-stack/overlays/monitoring` |
 | `prometheus-stack` | `flux/infrastructure/prometheus/overlays/monitoring` |
 | `apps` | `flux/apps/monitoring` |
 
