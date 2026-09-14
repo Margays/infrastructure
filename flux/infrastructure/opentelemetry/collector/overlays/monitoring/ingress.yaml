@@ -17,6 +17,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: opentelemetry-collector-lb
+                name: opentelemetry-collector-collector
                 port:
                   number: 4318
