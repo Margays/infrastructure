@@ -47,6 +47,9 @@ spec:
       enabled: false
     grafana:
       enabled: false
+      sidecar:
+        datasources:
+          url: http://victoria-metrics-cluster-vmselect.victoria-metrics.svc.cluster.local:8481/select/0/prometheus
       ingress:
         enabled: true
         ingressClassName: cilium
