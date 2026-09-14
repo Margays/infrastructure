@@ -6,6 +6,8 @@ resources:
   - external-secrets-config.yaml
   - external-secrets-controller.yaml
   - metrics-server.yaml
+  - opentelemetry-collector.yaml
+  - opentelemetry-operator.yaml
   - prometheus-stack.yaml
   - storage.yaml
   - victoria-stack.yaml

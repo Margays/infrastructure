@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: opentelemetry-collector
+  namespace: open-telemetry-operator
+spec:
+  secretName: opentelemetry-collector-tls
+  issuerRef:
+    name: cloudflare-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - otel.monitoring.lab.margays.dev

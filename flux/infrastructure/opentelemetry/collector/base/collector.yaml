@@ -1,0 +1,45 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: opentelemetry-collector
+spec:
+  config:
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+
+    exporters:
+      otlphttp/traces:
+        endpoint: http://victoria-traces-cluster-vt-cluster-vtinsert.monitoring.svc.cluster.local:10481
+        tls:
+          insecure: true
+      otlphttp/metrics:
+        endpoint: http://victoria-metrics-cluster-vminsert.monitoring.svc.cluster.local:8480
+        tls:
+          insecure: true
+      otlphttp/logs:
+        endpoint: http://victoria-logs-cluster-vlinsert.monitoring.svc.cluster.local:9481
+        tls:
+          insecure: true
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter]
+          exporters: [otlphttp/traces]
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter]
+          exporters: [otlphttp/metrics]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter]
+          exporters: [otlphttp/logs]
