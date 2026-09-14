@@ -17,15 +17,15 @@ spec:
 
     exporters:
       otlphttp/traces:
-        endpoint: http://victoria-traces-cluster-vt-cluster-vtinsert.monitoring.svc.cluster.local:10481
+        endpoint: http://victoria-traces-cluster-vt-cluster-vtinsert.monitoring.svc.cluster.local:10481/opentelemetry/v1/traces
         tls:
           insecure: true
       otlphttp/metrics:
-        endpoint: http://victoria-metrics-cluster-vminsert.monitoring.svc.cluster.local:8480
+        endpoint: http://victoria-metrics-cluster-vminsert.monitoring.svc.cluster.local:8480/opentelemetry/v1/metrics
         tls:
           insecure: true
       otlphttp/logs:
-        endpoint: http://victoria-logs-cluster-vlinsert.monitoring.svc.cluster.local:9481
+        endpoint: http://victoria-logs-cluster-vlinsert.monitoring.svc.cluster.local:9481/opentelemetry/v1/logs
         tls:
           insecure: true
 
