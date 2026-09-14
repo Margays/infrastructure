@@ -47,5 +47,13 @@ spec:
       enabled: false
     grafana:
       enabled: false
+      ingress:
+        enabled: true
+        ingressClassName: cilium
+        hosts: &grafana-hosts
+          - grafana.monitoring.lab.margays.dev
+        tls:
+          - secretName: grafana-tls
+            hosts: *grafana-hosts
     
   interval: 1h
