@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: victoria-stack
+  namespace: victoria-metrics
+spec:
+  ingressClassName: cilium
+  tls:
+    - hosts:
+        - logs.monitoring.lab.margays.dev
+        - metrics.monitoring.lab.margays.dev
+        - traces.monitoring.lab.margays.dev
+      secretName: victoria-stack-tls
+  rules:
+    - host: logs.monitoring.lab.margays.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: victoria-logs-cluster-vlselect
+                port:
+                  number: 9471
+    - host: metrics.monitoring.lab.margays.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: victoria-metrics-cluster-vmselect
+                port:
+                  number: 8481
+    - host: traces.monitoring.lab.margays.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: victoria-traces-cluster-vt-cluster-vtselect
+                port:
+                  number: 10471
