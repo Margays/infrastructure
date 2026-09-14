@@ -42,7 +42,7 @@ spec:
               - action: replace
                 replacement: "unknown-cluster"
                 sourceLabels: []
-                targetLabel: source_cluster
+                targetLabel: data_source
     kubeProxy:
       enabled: false
     grafana:
