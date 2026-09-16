@@ -35,7 +35,7 @@ spec:
       retention: 12h
       prometheusSpec:
         remoteWrite:
-          - url: http://victoriametrics-cluster-vmselect.victoria-metrics.svc.cluster.local:8480/insert/0/prometheus/api/v1/write
+          - url: http://victoriametrics-cluster-vminsert.victoria-metrics.svc.cluster.local:8480/insert/0/prometheus/api/v1/write
             tlsConfig:
               insecureSkipVerify: true
             writeRelabelConfigs:
