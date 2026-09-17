@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: victoria-metrics-cluster
+  namespace: victoria-metrics
+spec:
+  secretName: victoria-metrics-cluster-tls
+  issuerRef:
+    name: cloudflare-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - metrics.monitoring.lab.margays.dev

@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: victoria-metrics-cluster
+  namespace: victoria-metrics
+spec:
+  ingressClassName: cilium
+  tls:
+    - hosts:
+        - metrics.monitoring.lab.margays.dev
+      secretName: victoria-metrics-cluster-tls
+  rules:
+    - host: metrics.monitoring.lab.margays.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: victoria-metrics-cluster-vminsert
+                port:
+                  number: 8480
