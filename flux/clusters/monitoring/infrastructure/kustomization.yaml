@@ -9,5 +9,6 @@ resources:
   - opentelemetry-collector.yaml
   - opentelemetry-operator.yaml
   - prometheus-stack.yaml
+  - snmp-exporter.yaml
   - storage.yaml
   - victoria-stack.yaml
