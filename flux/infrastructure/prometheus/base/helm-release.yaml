@@ -35,7 +35,7 @@ spec:
       retention: 12h
       prometheusSpec:
         remoteWrite:
-          - url: http://victoriametrics-cluster-vminsert.victoria-metrics.svc.cluster.local:8480/insert/0/prometheus/api/v1/write
+          - url: http://victoriametrics-cluster-vminsert.victoria-metrics.svc:8480/insert/0/prometheus/api/v1/write
             tlsConfig:
               insecureSkipVerify: true
             writeRelabelConfigs:
@@ -49,7 +49,7 @@ spec:
       enabled: false
       sidecar:
         datasources:
-          url: http://victoria-metrics-cluster-vmselect.victoria-metrics.svc.cluster.local:8481/select/0/prometheus
+          url: http://victoria-metrics-cluster-vmselect.victoria-metrics.svc:8481/select/0/prometheus
       ingress:
         enabled: true
         ingressClassName: cilium
