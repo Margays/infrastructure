@@ -1,0 +1,62 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: snmp-exporter
+spec:
+  chart:
+    spec:
+      chart: prometheus-snmp-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+      version: 9.18.0
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: -1
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: -1
+  values:
+    config: |-
+      auths:
+        mikrotik_v3:
+          version: 3
+          username: ${SNMP_USERNAME}
+          security_level: authPriv
+          auth_protocol: SHA
+          password: ${SNMP_AUTH_PASSWORD}
+          priv_protocol: AES
+          priv_password: ${SNMP_PRIV_PASSWORD}
+
+    # Load both:
+    # - our authentication configuration
+    # - the image's bundled modules, including "mikrotik"
+    extraArgs:
+      - --config.file=/etc/snmp_exporter/snmp.yml
+      - --config.expand-environment-variables
+
+    envFrom:
+      - secretRef:
+          name: snmp-exporter-auth
+
+    serviceMonitor:
+      enabled: true
+      # This label must match your Prometheus ServiceMonitor selector.
+      # Common kube-prometheus-stack value:
+      selector:
+        release: kube-prometheus-stack
+      auth:
+        - mikrotik_v3
+      module:
+        - mikrotik
+        - if_mib
+        - system
+      interval: 60s
+      scrapeTimeout: 30s
+      params:
+        - name: router
+          target: 192.168.200.1
+    
+  interval: 1h
