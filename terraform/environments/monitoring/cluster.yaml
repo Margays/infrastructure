@@ -40,6 +40,12 @@ spec:
       version: 1.19.6
       repository: https://helm.cilium.io
       values: |
+        hubble:
+          enabled: true
+          relay:
+            enabled: true
+          ui:
+            enabled: true
         ipam:
           mode: kubernetes
         l7Proxy: true
