@@ -6,6 +6,7 @@ metadata:
 spec:
   dependsOn:
     - name: victoria-stack
+    - name: opentelemetry-operator
   interval: 1h
   retryInterval: 10m
   timeout: 15m
