@@ -34,7 +34,7 @@ spec:
     # - our authentication configuration
     # - the image's bundled modules, including "mikrotik"
     extraArgs:
-      - --config.file=/etc/snmp_exporter/snmp.yml
+      # - --config.file=/etc/snmp_exporter/snmp.yml
       - --config.expand-environment-variables
 
     envFrom:
