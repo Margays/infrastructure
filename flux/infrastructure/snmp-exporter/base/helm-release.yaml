@@ -19,6 +19,17 @@ spec:
     remediation:
       retries: -1
   values:
+    config: |-
+      auths:
+        mikrotik_v3:
+          version: 3
+          username: ${SNMP_USERNAME}
+          security_level: authPriv
+          auth_protocol: SHA
+          password: ${SNMP_AUTH_PASSWORD}
+          priv_protocol: AES
+          priv_password: ${SNMP_PRIV_PASSWORD}
+
     # Load both:
     # - our authentication configuration
     # - the image's bundled modules, including "mikrotik"
