@@ -47,5 +47,11 @@ spec:
       params:
         - name: router
           target: 192.168.200.1
+        - name: switch
+          target: 192.168.200.2
+        - name: ap
+          target: 192.168.200.3
+        - name: crs309
+          target: 192.168.200.4
     
   interval: 1h
