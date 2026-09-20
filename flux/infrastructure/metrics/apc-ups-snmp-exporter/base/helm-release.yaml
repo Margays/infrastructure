@@ -1,0 +1,296 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: apc-ups-snmp-exporter
+spec:
+  chart:
+    spec:
+      chart: prometheus-snmp-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+      version: 9.18.0
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: -1
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: -1
+  values:
+    config: |-
+      auths:
+        apc_v3:
+          version: 3
+          username: ${APC_SNMP_USERNAME}
+          security_level: authPriv
+          auth_protocol: SHA
+          password: ${APC_SNMP_AUTH_PASSWORD}
+          priv_protocol: AES
+          priv_password: ${APC_SNMP_PRIV_PASSWORD}
+      modules:
+        ups_apc:
+          walk:
+            - 1.3.6.1.2.1.33.1.2
+            - 1.3.6.1.2.1.33.1.3
+            - 1.3.6.1.2.1.33.1.4
+            - 1.3.6.1.2.1.33.1.6
+            - 1.3.6.1.2.1.33.1.7
+            - 1.3.6.1.2.1.33.1.8
+            - 1.3.6.1.4.1.318.1.1.1
+            - 1.3.6.1.4.1.318.1.1.2
+            - 1.3.6.1.4.1.318.1.1.3
+            - 1.3.6.1.2.1.1
+            - 1.3.6.1.2.1.33.1.3.2.0
+
+          metrics:
+            - name: ups_powernet_output_frequency_hz
+              oid: 1.3.6.1.4.1.318.1.1.1.4.3.2.0
+              type: gauge
+              help: Output frequency in tenths of Hz from PowerNet MIB (divide by 10)
+
+            - name: ups_battery_test_capacity_mah
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.5
+              type: gauge
+              help: Battery capacity as determined by the last test (mAh)
+
+            - name: ups_input_line_bads
+              oid: 1.3.6.1.2.1.33.1.3.2.0
+              type: counter
+              help: Number of input line faults or dropouts detected
+
+            - name: ups_battery_status
+              oid: 1.3.6.1.2.1.33.1.2.1.0
+              type: gauge
+              help: Battery status of the UPS (1=unknown, 2=batteryNormal, 3=batteryLow, 4=batteryDepleted)
+
+            - name: ups_battery_charge_remaining
+              oid: 1.3.6.1.2.1.33.1.2.4.0
+              type: gauge
+              help: Battery charge remaining (percent)
+
+            - name: ups_battery_time_remaining
+              oid: 1.3.6.1.2.1.33.1.2.3.0
+              type: gauge
+              help: Estimated runtime remaining in seconds
+
+            - name: ups_input_voltage
+              oid: 1.3.6.1.2.1.33.1.3.3.1.3.1
+              type: gauge
+              help: UPS input voltage (Volts)
+
+            - name: ups_input_frequency
+              oid: 1.3.6.1.2.1.33.1.3.3.1.4.1
+              type: gauge
+              help: UPS input frequency (Hz)
+
+            - name: ups_input_status
+              oid: 1.3.6.1.2.1.33.1.3.1.0
+              type: gauge
+              help: UPS input status
+
+            - name: ups_output_voltage
+              oid: 1.3.6.1.2.1.33.1.4.4.1.2.1
+              type: gauge
+              help: UPS output voltage (Volts)
+
+            - name: ups_output_current
+              oid: 1.3.6.1.2.1.33.1.4.4.1.3.1
+              type: gauge
+              help: UPS output current (Amperes)
+
+            - name: ups_output_load_percent
+              oid: 1.3.6.1.2.1.33.1.4.4.1.5.1
+              type: gauge
+              help: UPS output load (percent)
+
+            - name: ups_output_status
+              oid: 1.3.6.1.2.1.33.1.4.1.0
+              type: gauge
+              help: UPS output status (other(1), none(2), normal(3), bypass(4), battery(5), booster(6), reducer(7))
+
+            - name: ups_bypass_status
+              oid: 1.3.6.1.2.1.33.1.7.1.0
+              type: gauge
+              help: Bypass status
+
+            - name: ups_test_result
+              oid: 1.3.6.1.2.1.33.1.8.2.0
+              type: gauge
+              help: Result of last battery test
+
+            - name: ups_temperature
+              oid: 1.3.6.1.2.1.33.1.2.7.0
+              type: gauge
+              help: General UPS temperature in Celsius
+              
+            - name: ups_seconds_on_battery
+              oid: 1.3.6.1.2.1.33.1.2.2.0
+              type: gauge
+              help: Seconds elapsed since the UPS switched to battery power (0 = on mains)
+          
+            - name: ups_apc_runtime_status
+              oid: 1.3.6.1.4.1.318.1.1.3.1.2.1.1.0
+              type: gauge
+              help: APC UPS runtime status (integer)
+
+            - name: ups_apc_transfer_count
+              oid: 1.3.6.1.4.1.318.1.1.3.1.2.2.1.0
+              type: counter
+              help: Number of transfers to battery power
+
+            - name: ups_apc_total_runtime
+              oid: 1.3.6.1.4.1.318.1.1.3.1.2.1
+              type: counter
+              help: APC UPS total runtime in seconds
+
+            - name: ups_powernet_ups_status
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.1.0
+              type: gauge
+              help: UPS overall status from PowerNet MIB
+
+            - name: ups_powernet_input_voltage
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.2.0
+              type: gauge
+              help: PowerNet input voltage (divide in dashboard if needed)
+
+            - name: ups_powernet_input_frequency
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.3.0
+              type: gauge
+              help: PowerNet input frequency (divide if > 1000)
+
+            - name: ups_powernet_output_voltage
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.4.0
+              type: gauge
+              help: PowerNet output voltage (divide if needed)
+
+            - name: ups_powernet_output_frequency
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.5.0
+              type: gauge
+              help: PowerNet output frequency (divide if needed)
+
+            - name: ups_powernet_output_current
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.6.0
+              type: gauge
+              help: Output current in tenths of Amperes
+
+            - name: ups_powernet_output_power
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.7.0
+              type: gauge
+              help: Output power in Watts
+
+            - name: ups_powernet_battery_voltage
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.8.0
+              type: gauge
+              help: Battery voltage (Volts)
+
+            - name: ups_powernet_battery_current
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.9.0
+              type: gauge
+              help: Battery current in Amperes
+
+            - name: ups_powernet_ups_runtime_seconds
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.10.0
+              type: counter
+              help: Cumulative runtime in seconds (PowerNet)
+
+            - name: sys_uptime_seconds
+              oid: 1.3.6.1.2.1.1.3.0
+              type: gauge
+              help: System uptime in seconds
+              scale: 0.01
+
+            - name: ups_battery_voltage_raw
+              oid: 1.3.6.1.2.1.33.1.2.5.0
+              type: gauge
+              help: Raw battery voltage from standard UPS MIB
+
+            - name: ups_output_source
+              oid: 1.3.6.1.2.1.33.1.4.4.1.4.1
+              type: gauge
+              help: Source of UPS output (0=unknown, 1=other, 2=none, 3=normal, 4=bypass, 5=battery, 6=booster, 7=reducer)
+
+            - name: ups_battery_needs_replacement
+              oid: 1.3.6.1.4.1.318.1.1.1.7.2.6.0
+              type: gauge
+              help: Indicates if battery needs replacement (1=yes, 2=no)
+            
+            - name: ups_alarm_count
+              oid: 1.3.6.1.2.1.33.1.6.3.0
+              type: gauge
+              help: Number of active UPS alarms
+
+            - name: ups_test_elapsed_time
+              oid: 1.3.6.1.2.1.33.1.8.3.0
+              type: gauge
+              help: Seconds elapsed since last battery test
+
+            - name: ups_test_interval
+              oid: 1.3.6.1.2.1.33.1.8.4.0
+              type: gauge
+              help: Self-test interval configuration in seconds (-1 = UPS Startup or complex mode)
+            
+            - name: ups_battery_replacement_date
+              oid: 1.3.6.1.4.1.318.1.1.1.7.2.4.0
+              type: DisplayString
+              help: Date the UPS battery was last replaced
+            
+            - name: ups_battery_model
+              oid: 1.3.6.1.4.1.318.1.1.1.2.2.19.0
+              type: DisplayString
+              help: UPS battery model (e.g., RBC48)
+              
+            - name: ups_sys_descr
+              oid: 1.3.6.1.2.1.1.1.0
+              type: DisplayString
+              help: System description, typically includes UPS model and firmware
+              
+            - name: ups_sys_name
+              oid: 1.3.6.1.2.1.1.5.0
+              type: DisplayString
+              help: System name
+
+            - name: ups_sys_location
+              oid: 1.3.6.1.2.1.1.6.0
+              type: DisplayString
+              help: Physical UPS location
+
+            - name: ups_sys_contact
+              oid: 1.3.6.1.2.1.1.4.0
+              type: DisplayString
+              help: Contact responsible for this UPS
+            
+            - name: ups_firmware_version
+              oid: 1.3.6.1.4.1.318.1.1.1.1.2.1.0
+              type: DisplayString
+              help: UPS firmware version string
+
+    # Load both:
+    # - our authentication configuration
+    # - the image's bundled modules, including "mikrotik"
+    extraArgs:
+      - --config.file=/etc/snmp_exporter/snmp.yml
+      - --config.expand-environment-variables
+
+    envFrom:
+      - secretRef:
+          name: apc-ups-snmp-exporter-auth
+
+    serviceMonitor:
+      enabled: true
+      # This label must match your Prometheus ServiceMonitor selector.
+      # Common kube-prometheus-stack value:
+      selector:
+        release: kube-prometheus-stack
+      auth:
+        - apc_v3
+      module:
+        - ups_apc
+      interval: 60s
+      scrapeTimeout: 30s
+      params:
+        - name: router
+          target: 192.168.200.253
+
+  interval: 1h
