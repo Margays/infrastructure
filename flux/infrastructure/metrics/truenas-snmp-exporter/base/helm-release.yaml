@@ -1,0 +1,316 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: apc-ups-snmp-exporter
+spec:
+  chart:
+    spec:
+      chart: prometheus-snmp-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+      version: 9.18.0
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: -1
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: -1
+  values:
+    config: |-
+      auths:
+        truenas_v3:
+          version: 3
+          username: ${SNMP_USERNAME}
+          security_level: authPriv
+          auth_protocol: SHA
+          password: ${SNMP_AUTH_PASSWORD}
+          priv_protocol: AES
+          priv_password: ${SNMP_PRIV_PASSWORD}
+      modules:
+        truenas:
+          walk:
+            - "1.3.6.1.4.1.50536.1"
+            - "1.3.6.1.4.1.50536.3"
+          metrics:
+            - name: "zpoolHealth"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.3"
+              type: "DisplayString"
+              help: "The health of the zpool"
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zpoolReadOps"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.4"
+              type: "gauge"
+              help: "The number of read I/O operations sent to the pool or device, including metadata requests (averaged since system booted)."
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zpoolWriteOps"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.5"
+              type: "gauge"
+              help: "The number of write I/O operations sent to the pool or device (averaged since system booted)."
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zpoolReadBytes"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.6"
+              type: "gauge"
+              help: "The bandwidth of all read operations (including metadata), expressed as units per second (averaged since system booted)"
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zpoolWriteBytes"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.7"
+              type: "gauge"
+              help: "The bandwidth of all write operations, expressed as units per second (averaged since system booted)."
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zpoolReadOps1sec"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.8"
+              type: "gauge"
+              help: "The number of read I/O operations sent to the pool or device, including metadata requests (over 1 second interval)."
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zpoolWriteOps1sec"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.9"
+              type: "gauge"
+              help: "The number of write I/O operations sent to the pool or device (over 1 second interval)."
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zpoolReadBytes1sec"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.10"
+              type: "gauge"
+              help: "The bandwidth of all read operations (including metadata), expressed as units per second (over 1 second interval)"
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zpoolWriteBytes1sec"
+              oid: "1.3.6.1.4.1.50536.1.1.1.1.11"
+              type: "gauge"
+              help: "The bandwidth of all write operations, expressed as units per second (over 1 second interval)."
+              indexes:
+                - labelname: "zpoolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zpoolIndex"
+                  labelname: "zpoolName"
+                  oid: "1.3.6.1.4.1.50536.1.1.1.1.2"
+                  type: "DisplayString"
+            - name: "zvolUsedBytes"
+              oid: "1.3.6.1.4.1.50536.1.2.1.1.3"
+              type: "gauge"
+              help: "The zfs used property value"
+              indexes:
+                - labelname: "zvolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zvolIndex"
+                  labelname: "zvolDescr"
+                  oid: "1.3.6.1.4.1.50536.1.2.1.1.2"
+                  type: "DisplayString"
+            - name: "zvolAvailableBytes"
+              oid: "1.3.6.1.4.1.50536.1.2.1.1.4"
+              type: "gauge"
+              help: "The zfs available property value"
+              indexes:
+                - labelname: "zvolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zvolIndex"
+                  labelname: "zvolDescr"
+                  oid: "1.3.6.1.4.1.50536.1.2.1.1.2"
+                  type: "DisplayString"
+            - name: "zvolReferencedBytes"
+              oid: "1.3.6.1.4.1.50536.1.2.1.1.5"
+              type: "gauge"
+              help: "The zfs referenced property value"
+              indexes:
+                - labelname: "zvolIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "zvolIndex"
+                  labelname: "zvolDescr"
+                  oid: "1.3.6.1.4.1.50536.1.2.1.1.2"
+                  type: "DisplayString"
+            - name: "zfsArcSize"
+              oid: "1.3.6.1.4.1.50536.1.3.1"
+              type: "gauge"
+              help: "zfsArcSize as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsArcMeta"
+              oid: "1.3.6.1.4.1.50536.1.3.2"
+              type: "gauge"
+              help: "zfsArcMeta as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsArcData"
+              oid: "1.3.6.1.4.1.50536.1.3.3"
+              type: "gauge"
+              help: "zfsArcData as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsArcHits"
+              oid: "1.3.6.1.4.1.50536.1.3.4"
+              type: "gauge"
+              help: "zfsArcHits as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsArcMisses"
+              oid: "1.3.6.1.4.1.50536.1.3.5"
+              type: "gauge"
+              help: "zfsArcMisses as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsArcC"
+              oid: "1.3.6.1.4.1.50536.1.3.6"
+              type: "gauge"
+              help: "zfsArcC as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsArcMissPercent"
+              oid: "1.3.6.1.4.1.50536.1.3.8"
+              type: "DisplayString"
+              help: "Arc Miss Percentage. Note: Floating precision sent across SNMP as a String"
+              regex_extracts:
+                "":
+                  - regex: "\\s*([0-9]+(?:\\.[0-9]+)?)\\s*%?\\s*"
+                    value: "$1"
+            - name: "zfsArcCacheHitRatio"
+              oid: "1.3.6.1.4.1.50536.1.3.9"
+              type: "DisplayString"
+              help: "Arc Cache Hit Ration Percentage. Note: Floating precision sent across SNMP as a String"
+              regex_extracts:
+                "":
+                  - regex: "\\s*([0-9]+(?:\\.[0-9]+)?)\\s*%?\\s*"
+                    value: "$1"
+            - name: "zfsArcCacheMissRatio"
+              oid: "1.3.6.1.4.1.50536.1.3.10"
+              type: "DisplayString"
+              help: "Arc Cache Miss Ration Percentage. Note: Floating precision sent across SNMP as a String"
+              regex_extracts:
+                "":
+                  - regex: "\\s*([0-9]+(?:\\.[0-9]+)?)\\s*%?\\s*"
+                    value: "$1"
+            - name: "zfsL2ArcHits"
+              oid: "1.3.6.1.4.1.50536.1.4.1"
+              type: "counter"
+              help: "zfsL2ArcHits as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsL2ArcMisses"
+              oid: "1.3.6.1.4.1.50536.1.4.2"
+              type: "counter"
+              help: "zfsL2ArcMisses as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsL2ArcRead"
+              oid: "1.3.6.1.4.1.50536.1.4.3"
+              type: "counter"
+              help: "zfsL2ArcRead as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsL2ArcWrite"
+              oid: "1.3.6.1.4.1.50536.1.4.4"
+              type: "counter"
+              help: "zfsL2ArcWrite as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsL2ArcSize"
+              oid: "1.3.6.1.4.1.50536.1.4.5"
+              type: "gauge"
+              help: "zfsL2ArcSize as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsZilstatOps1sec"
+              oid: "1.3.6.1.4.1.50536.1.5.1"
+              type: "gauge"
+              help: "zfsZilstatOps1sec as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsZilstatOps5sec"
+              oid: "1.3.6.1.4.1.50536.1.5.2"
+              type: "gauge"
+              help: "zfsZilstatOps5sec as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "zfsZilstatOps10sec"
+              oid: "1.3.6.1.4.1.50536.1.5.3"
+              type: "gauge"
+              help: "zfsZilstatOps10sec as reported by TRUENAS-MIB; units unspecified in the MIB."
+            - name: "hddTempValue"
+              oid: "1.3.6.1.4.1.50536.3.1.3"
+              type: "gauge"
+              help: "HDD temperature in degrees Celsius."
+              indexes:
+                - labelname: "hddTempIndex"
+                  type: "gauge"
+              lookups:
+                - labels:
+                    - "hddTempIndex"
+                  labelname: "hddTempDevice"
+                  oid: "1.3.6.1.4.1.50536.3.1.2"
+                  type: "DisplayString"
+              scale: 0.001
+
+    # Load both:
+    # - our authentication configuration
+    # - the image's bundled modules, including "mikrotik"
+    extraArgs:
+      - --config.file=/etc/snmp_exporter/snmp.yml
+      - --config.expand-environment-variables
+
+    envFrom:
+      - secretRef:
+          name: truenas-snmp-exporter-auth
+
+    serviceMonitor:
+      enabled: true
+      # This label must match your Prometheus ServiceMonitor selector.
+      # Common kube-prometheus-stack value:
+      selector:
+        release: kube-prometheus-stack
+      auth:
+        - truenas_v3
+      module:
+        - truenas
+      interval: 60s
+      scrapeTimeout: 30s
+      params:
+        - name: truenas
+          target: 192.168.2.3
+
+  interval: 1h
