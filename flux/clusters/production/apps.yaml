@@ -7,8 +7,11 @@ spec:
   interval: 1m
   path: ./flux/apps/production
   prune: true
+  wait: true
   dependsOn:
-    - name: victoria-stack
+    - name: cnpg
+    - name: storage
+    - name: external-secrets-config
   sourceRef:
     kind: GitRepository
     name: flux-system
