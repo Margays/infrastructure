@@ -3,5 +3,6 @@ kind: HelmRepository
 metadata:
   name: helm-charts-internal
 spec:
+  type: oci
   interval: 1h
   url: oci://harbour.lab.margays.dev/helm-charts-internal
