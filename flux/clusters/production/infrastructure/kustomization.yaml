@@ -5,6 +5,7 @@ resources:
   - cert-manager-controller.yaml
   - external-secrets-config.yaml
   - external-secrets-controller.yaml
+  - cnpg.yaml
   - metrics-server.yaml
   - prometheus-stack.yaml
   - metrics.yaml
