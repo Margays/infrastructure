@@ -45,7 +45,7 @@ resource "proxmox_download_file" "talos_iso" {
   datastore_id = "truenas-nfs"
   node_name    = "minisforum"
   url          = var.configuration.spec.cluster.image
-  file_name    = "talos.iso"
+  file_name    = "${var.configuration.spec.name}-talos.iso"
 }
 
 resource "proxmox_virtual_environment_vm" "talos" {
