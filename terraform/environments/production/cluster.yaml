@@ -1,47 +1,35 @@
 kind: TalosCluster
 spec:
-  name: orion
+  name: production
   cluster:
     kubernetes_version: v1.36.0
     endpoint: "https://10.0.2.2:6443"
     image: "https://factory.talos.dev/image/eb9f56e16162aba08217e4e4de4777645ca9a296101c2fe48e8f528d20ba57d7/v1.13.8/metal-amd64.iso"
   nodes:
-    - name: "talos01"
+    - name: "production01"
       role: controlplane
       proxmox_node_name: "odroid02"
       network:
         address: "10.0.2.2"
         bridge: "vmbr0"
-        mac_address: "BC:24:11:00:00:01"
-        vlan_id: 1000
+        mac_address: "BC:24:11:01:00:01"
+        vlan_id: 1002
       resources:
         cpu: 4
-        memory: 8192
-        disk: 32
-    - name: "talos02"
+        memory: 6144
+        disk: 64
+    - name: "production02"
       role: worker
       proxmox_node_name: "odroid02"
       network:
         address: "10.0.2.3"
         bridge: "vmbr0"
-        mac_address: "BC:24:11:00:00:02"
-        vlan_id: 1000
+        mac_address: "BC:24:11:01:00:02"
+        vlan_id: 1002
       resources:
         cpu: 4
-        memory: 8192
-        disk: 32
-    - name: "talos03"
-      role: worker
-      proxmox_node_name: "odroid02"
-      network:
-        address: "10.0.2.4"
-        bridge: "vmbr0"
-        mac_address: "BC:24:11:00:00:03"
-        vlan_id: 1000
-      resources:
-        cpu: 4
-        memory: 8192
-        disk: 32
+        memory: 10240
+        disk: 64
   config_patches_directory: "patches"
   manifests:
     - name: cilium
@@ -51,7 +39,23 @@ spec:
       chart: cilium
       version: 1.19.6
       repository: https://helm.cilium.io
-      values:
+      values: |
+        hubble:
+          enabled: true
+          relay:
+            enabled: true
+          ui:
+            enabled: true
+          tls:
+            auto:
+              # enable automatic TLS certificate generation
+              enabled: true
+              # auto generate certificates using cronJob method
+              method: cronJob
+              # certificates validity duration in days (default 3 years)
+              certValidityDuration: 1095
+              # schedule for certificates re-generation (crontab syntax)
+              schedule: "0 0 1 */4 *"
         ipam:
           mode: kubernetes
         l7Proxy: true

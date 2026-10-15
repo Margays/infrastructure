@@ -9,8 +9,8 @@ patches:
       name: kube-prometheus-stack
     patch: |-
       - op: replace
-        path: /spec/values/grafana/enabled
-        value: true
+        path: /spec/values/prometheus/prometheusSpec/remoteWrite/0/url
+        value: https://metrics.monitoring.lab.margays.dev/insert/0/prometheus/api/v1/write
       - op: replace
         path: /spec/values/prometheus/prometheusSpec/remoteWrite/0/writeRelabelConfigs/0/replacement
         value: production

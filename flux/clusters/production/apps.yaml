@@ -8,7 +8,7 @@ spec:
   path: ./flux/apps/production
   prune: true
   dependsOn:
-    - name: infrastructure
+    - name: victoria-stack
   sourceRef:
     kind: GitRepository
     name: flux-system

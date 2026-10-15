@@ -22,6 +22,7 @@ data "vault_generic_secret" "proxmox" {
   path = "kv/proxmox"
 }
 
+
 module "talos" {
   source        = "../../modules/talos"
   configuration = yamldecode(file(var.config_path))
@@ -86,4 +87,5 @@ resource "vault_kubernetes_auth_backend_role" "external_secrets" {
   role_name                        = "external-secrets"
   bound_service_account_names      = ["external-secrets"]
   bound_service_account_namespaces = ["external-secrets"]
+  token_policies                   = ["external-secrets"]
 }

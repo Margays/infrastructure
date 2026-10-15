@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - cert-manager-config.yaml
+  - cert-manager-controller.yaml
+  - external-secrets-config.yaml
+  - external-secrets-controller.yaml
+  - metrics-server.yaml
+  - prometheus-stack.yaml
+  - metrics.yaml
+  - storage.yaml

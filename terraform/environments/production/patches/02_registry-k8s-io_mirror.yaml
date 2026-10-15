@@ -1,0 +1,7 @@
+---
+apiVersion: v1alpha1
+kind: RegistryMirrorConfig
+name: registry.k8s.io
+endpoints:
+  - url: https://harbour.lab.margays.dev/v2/registry-k8s-io
+    overridePath: true
