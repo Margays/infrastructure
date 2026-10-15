@@ -12,7 +12,7 @@ spec:
       network:
         address: "10.0.2.2"
         bridge: "vmbr0"
-        mac_address: "BC:24:11:01:00:01"
+        mac_address: "BC:24:11:02:00:01"
         vlan_id: 1002
       resources:
         cpu: 4
@@ -24,7 +24,7 @@ spec:
       network:
         address: "10.0.2.3"
         bridge: "vmbr0"
-        mac_address: "BC:24:11:01:00:02"
+        mac_address: "BC:24:11:02:00:02"
         vlan_id: 1002
       resources:
         cpu: 4
