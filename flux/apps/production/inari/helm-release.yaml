@@ -9,7 +9,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: helm-charts-internal
-      version: ">=0.4.0 <1.0.0"
+      version: ">=0.9.0 <1.0.0"
       interval: 5m
   install:
     crds: CreateReplace
@@ -21,6 +21,7 @@ spec:
       retries: -1
   values:
     backend:
+      mcpEnabled: true
       resources:
         limits:
           # Allow headroom for decoding and resizing uploaded images.
