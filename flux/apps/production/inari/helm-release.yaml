@@ -28,6 +28,7 @@ spec:
           memory: 1Gi
     ingress:
       enabled: true
+      mcpEnabled: true
       className: cilium
       host: inari.margays.dev
       tlsSecretName: inari-tls
