@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: inari
+  namespace: inari
+spec:
+  secretName: inari-tls
+  issuerRef:
+    name: cloudflare-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - inari.margays.dev

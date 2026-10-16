@@ -19,6 +19,11 @@ spec:
     remediation:
       retries: -1
   values:
+    ingress:
+      enabled: true
+      className: cilium
+      host: inari.margays.dev
+      tlsSecretName: inari-tls
     postgresql:
       podSecurityContext:
         # Match the production NFS data-directory owner.
