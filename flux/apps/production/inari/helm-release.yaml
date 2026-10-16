@@ -19,6 +19,11 @@ spec:
     remediation:
       retries: -1
   values:
+    backend:
+      resources:
+        limits:
+          # Allow headroom for decoding and resizing uploaded images.
+          memory: 1Gi
     ingress:
       enabled: true
       className: cilium
